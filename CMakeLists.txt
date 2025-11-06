@@ -82,10 +82,3 @@ include(AddUninstallTarget)
 yarp_configure_plugins_installation(yarp-device-xhand)
 
 add_subdirectory(src)
-
-option(BUILD_TESTING "Create tests using CMake" OFF)
-if(BUILD_TESTING)
-    find_package(Catch2 3.0.1 REQUIRED)
-    enable_testing()
-    add_subdirectory(tests)
-endif()
