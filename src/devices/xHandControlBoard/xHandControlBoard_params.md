@@ -1,0 +1,5 @@
+| Group |  Parameter                    | Type   | Units    | Default Value                | Required  | Description                                       | Notes                                      |
+|:-----:|:-----------------------------:|:------:|:--------:|:----------------------------:|:---------:|:-------------------------------------------------:|:------------------------------------------:|
+|       | connection_type               | string | -        |   -                          | Yes       | Specify the connection type                       | Can be either "serial" or "ethercat"       |
+|       | serial_port                   | string | -        |   -                          | Yes       | Specify the port to use for the serial connection | Necessary only if using "serial"           |
+|       | baudrate                      | int    | -        |   -                          | Yes       | Specify the baudrate for the serial connection    | Necessary only if using "serial"           |

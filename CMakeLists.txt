@@ -68,6 +68,12 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 find_package(YCM REQUIRED)
 find_package(YARP REQUIRED)
 
+find_package(xhand_control REQUIRED)
+
+# Required by xhand_control
+find_package(CURL REQUIRED)
+find_package(nlohmann_json REQUIRED)
+
 set(YARP_FORCE_DYNAMIC_PLUGINS TRUE CACHE INTERNAL "yarp-device-xhand is always built with dynamic plugins")
 set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "Build libraries as shared as opposed to static")
 
