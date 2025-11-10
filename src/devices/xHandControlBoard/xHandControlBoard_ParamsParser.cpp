@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Fri Nov  7 17:48:26 2025
+// Generated on: Mon Nov 10 10:53:48 2025
 
 
 #include "xHandControlBoard_ParamsParser.h"
@@ -31,6 +31,7 @@ std::vector<std::string> xHandControlBoard_ParamsParser::getListOfParams() const
     params.push_back("connection_type");
     params.push_back("serial_port");
     params.push_back("baudrate");
+    params.push_back("eth_ifname");
     return params;
 }
 
@@ -93,6 +94,22 @@ bool      xHandControlBoard_ParamsParser::parseParams(const yarp::os::Searchable
         prop_check.unput("baudrate");
     }
 
+    //Parser of parameter eth_ifname
+    {
+        if (config.check("eth_ifname"))
+        {
+            m_eth_ifname = config.find("eth_ifname").asString();
+            yCInfo(xHandControlBoardParamsCOMPONENT) << "Parameter 'eth_ifname' using value:" << m_eth_ifname;
+        }
+        else
+        {
+            yCError(xHandControlBoardParamsCOMPONENT) << "Mandatory parameter 'eth_ifname' not found!";
+            yCError(xHandControlBoardParamsCOMPONENT) << "Description of the parameter: Specify the interface name for the ethercat connection";
+            return false;
+        }
+        prop_check.unput("eth_ifname");
+    }
+
     /*
     //This code check if the user set some parameter which are not check by the parser
     //If the parser is set in strict mode, this will generate an error
@@ -132,10 +149,11 @@ std::string      xHandControlBoard_ParamsParser::getDocumentationOfDeviceParams(
     doc = doc + std::string("'connection_type': Specify the connection type\n");
     doc = doc + std::string("'serial_port': Specify the port to use for the serial connection\n");
     doc = doc + std::string("'baudrate': Specify the baudrate for the serial connection\n");
+    doc = doc + std::string("'eth_ifname': Specify the interface name for the ethercat connection\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device xHandControlBoard --connection_type <mandatory_value> --serial_port <mandatory_value> --baudrate <mandatory_value>\n";
+    doc = doc + " yarpdev --device xHandControlBoard --connection_type <mandatory_value> --serial_port <mandatory_value> --baudrate <mandatory_value> --eth_ifname <mandatory_value>\n";
     doc = doc + std::string("Using only mandatory params:\n");
-    doc = doc + " yarpdev --device xHandControlBoard --connection_type <mandatory_value> --serial_port <mandatory_value> --baudrate <mandatory_value>\n";
+    doc = doc + " yarpdev --device xHandControlBoard --connection_type <mandatory_value> --serial_port <mandatory_value> --baudrate <mandatory_value> --eth_ifname <mandatory_value>\n";
     doc = doc + std::string("=============================================\n\n");    return doc;
 }
