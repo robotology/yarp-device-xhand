@@ -8,6 +8,8 @@ yarp_prepare_plugin(${plugin_name}
   TYPE yarp::dev::${plugin_name}
   INCLUDE xHandControlBoard.h
   OPTION ENABLE_xHandControlBoard
+  EXTRA_CONFIG
+    WRAPPER=controlBoard_nws_yarp
   DEFAULT ON
 )
 
