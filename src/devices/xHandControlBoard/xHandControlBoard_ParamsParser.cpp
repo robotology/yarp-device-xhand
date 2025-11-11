@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Mon Nov 10 10:53:48 2025
+// Generated on: Tue Nov 11 18:39:41 2025
 
 
 #include "xHandControlBoard_ParamsParser.h"

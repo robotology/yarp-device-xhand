@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Mon Nov 10 10:53:48 2025
+// Generated on: Tue Nov 11 18:39:41 2025
 
 
 #ifndef XHANDCONTROLBOARD_PARAMSPARSER_H
@@ -28,7 +28,7 @@
 * | -          | connection_type | string | -     | -             | 1        | Specify the connection type                            | Can be either \"serial\" or \"ethercat\" |
 * | -          | serial_port     | string | -     | -             | 1        | Specify the port to use for the serial connection      | Necessary only if using \"serial\"       |
 * | -          | baudrate        | int    | -     | -             | 1        | Specify the baudrate for the serial connection         | Necessary only if using \"serial\"       |
-* | -          | eth_ifname      | string | -     | -             | 1        | Specify the interface name for the ethercat connection | Can be either \"serial\" or \"ethercat\" |
+* | -          | eth_ifname      | string | -     | -             | 1        | Specify the interface name for the ethercat connection | Necessary only if using \"ethercat\"     |
 *
 * The device can be launched by yarpdev using one of the following examples (with and without all optional parameters):
 * \code{.unparsed}
