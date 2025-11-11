@@ -3,4 +3,4 @@
 |       | connection_type               | string | -        |   -                          | Yes       | Specify the connection type                            | Can be either "serial" or "ethercat"       |
 |       | serial_port                   | string | -        |   -                          | Yes       | Specify the port to use for the serial connection      | Necessary only if using "serial"           |
 |       | baudrate                      | int    | -        |   -                          | Yes       | Specify the baudrate for the serial connection         | Necessary only if using "serial"           |
-|       | eth_ifname                    | string | -        |   -                          | Yes       | Specify the interface name for the ethercat connection | Can be either "serial" or "ethercat"       |
+|       | eth_ifname                    | string | -        |   -                          | Yes       | Specify the interface name for the ethercat connection | Necessary only if using "ethercat"         |
