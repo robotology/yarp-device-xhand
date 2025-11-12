@@ -1,0 +1,21 @@
+# build
+/build/
+.build
+.pixi
+build*
+
+# vscode
+.vscode
+.vs
+
+# emacs
+*~
+\#*\#
+
+# Qtcreator
+*.user*
+*.autosave
+
+# Visual Studio
+.vs/
+CmakeSettings.json
