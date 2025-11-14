@@ -29,6 +29,12 @@ Remark: every time you install the exe you should repeat the above steps.
 sudo setcap -r </path/to/install>/bin/xhand-joint-test
 ```
 
+## Reduce USB latency timer
+
+Copy the [99-xhand.rules](/src/tests/99-xhand.rules) in `/etc/udev/rules.d` to:
+- reduce the USB latency timer to `1 ms`;
+- create a SYMLINK `ttyXHAND` fot the hand.
+
 # Plot results
 
 The test generates a `.csv` file, plot it with [plotTest](/src/tests/xhand-joint-test/plotTest.py):

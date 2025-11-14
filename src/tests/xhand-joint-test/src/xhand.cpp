@@ -35,9 +35,13 @@ bool xHAND::init(std::string connection, int16_t kp, int16_t ki, int16_t kd, uin
 
     xhand_control::ErrorStruct ret;
     if (connection == "RS485")
-        ret = m_ctrl.open_serial("/dev/ttyUSB0", 3000000);
+        ret = m_ctrl.open_serial("/dev/ttyXHAND", 3000000);
     else if (connection == "EtherCAT")
         ret = m_ctrl.open_ethercat(ifnames[first_device]);
+    else{
+        yError() << "[" + class_name_ + "::" + __func__ + "] Unknown connection type: " << connection;
+        return false;
+    }
 
     if (!ret){
         yError() << "[" + class_name_ + "::" + __func__ + "] Failed to open" + connection;

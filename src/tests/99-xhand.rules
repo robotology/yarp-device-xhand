@@ -1,0 +1,1 @@
+ACTION=="add", SUBSYSTEM=="tty", KERNEL=="ttyUSB*", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", ATTRS{serial}=="FTA6HQAR", SYMLINK+="ttyXHAND", RUN+="/bin/sh -c 'echo 1 > /sys/class/tty/%k/device/latency_timer'"
