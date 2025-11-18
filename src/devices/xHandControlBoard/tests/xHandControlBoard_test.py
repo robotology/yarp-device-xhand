@@ -116,6 +116,11 @@ class xHandControlBoardTest(yarp.RFModule):
             print('Cannot view encoders!')
             sys.exit()
 
+        self.ipctrl = self.drivers.viewIPositionDirect()
+        if self.ipctrl is None:
+            print('Cannot view encoders!')
+            sys.exit()
+
         delay = 1.0
         print("[" + self.name + f"::_configureDrivers] Waiting for {delay} seconds to let the device be ready...")
         yarp.delay(delay)
@@ -123,11 +128,15 @@ class xHandControlBoardTest(yarp.RFModule):
     def updateModule(self):
 
         # Measure time with high precision clock
-        tic = time.perf_counter()
+        t1 = time.perf_counter()
         if not self.ienc.getEncoders(self.encMeas.data()):
             print('Cannot read encoders!')
-        toc = time.perf_counter()
-        print(f" Time taken to read encoders: {toc - tic} seconds")
+        t2 = time.perf_counter()
+        self.ipctrl.setPositions(self.encMeas.data())
+        t3 = time.perf_counter()
+
+        print(f" Time taken to read encoders: {t2 - t1} seconds")
+        print(f" Time taken to set positions: {t3 - t2} seconds")
         print("Encoder measurements: " + self.encMeas.toString())
 
         self._logRerun()

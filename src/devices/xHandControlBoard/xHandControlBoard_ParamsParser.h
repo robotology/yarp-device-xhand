@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Tue Nov 18 10:26:17 2025
+// Generated on: Tue Nov 18 17:26:55 2025
 
 
 #ifndef XHANDCONTROLBOARD_PARAMSPARSER_H
@@ -23,16 +23,21 @@
 * This class is the parameters parser for class xHandControlBoard.
 *
 * These are the used parameters:
-* | Group name | Parameter name  | Type   | Units | Default Value | Required | Description                                            | Notes                                                    |
-* |:----------:|:---------------:|:------:|:-----:|:-------------:|:--------:|:------------------------------------------------------:|:--------------------------------------------------------:|
-* | -          | connection_type | string | -     | EtherCAT      | 1        | Specify the connection type                            | Can be either \"RS485\" (USB) or \"EtherCAT\" (ethernet) |
-* | RS485      | port            | string | -     | /dev/ttyXHAND | 0        | Specify the port to use for the serial connection      | Necessary only if using \"RS485\"                        |
-* | RS485      | baudrate        | int    | -     | 3000000       | 0        | Specify the baudrate for the serial connection         | Necessary only if using \"RS485\"                        |
-* | ETHERCAT   | eth_ifname      | string | -     | -             | 0        | Specify the interface name for the ethercat connection | Necessary only if using \"EtherCAT\"                     |
+* | Group name | Parameter name  | Type   | Units | Default Value | Required | Description                                               | Notes                                                    |
+* |:----------:|:---------------:|:------:|:-----:|:-------------:|:--------:|:---------------------------------------------------------:|:--------------------------------------------------------:|
+* | -          | connection_type | string | -     | EtherCAT      | 1        | Specify the connection type                               | Can be either \"RS485\" (USB) or \"EtherCAT\" (ethernet) |
+* | RS485      | port            | string | -     | /dev/ttyUSB0  | 0        | Specify the port to use for the serial connection         | Necessary only if using \"RS485\"                        |
+* | RS485      | baudrate        | int    | -     | 3000000       | 0        | Specify the baudrate for the serial connection            | Necessary only if using \"RS485\"                        |
+* | ETHERCAT   | eth_ifname      | string | -     | -             | 0        | Specify the interface name for the ethercat connection    | Necessary only if using \"EtherCAT\"                     |
+* | PID        | kp              | int    | -     | 225           | 0        | Finger motors P gain                                      | -                                                        |
+* | PID        | ki              | int    | -     | 0             | 0        | Finger motors I gain                                      | -                                                        |
+* | PID        | kd              | int    | -     | 12000         | 0        | Finger motors D gain                                      | -                                                        |
+* | TORQUE     | tor_max         | int    | -     | 350           | 0        | Note: 350 is the value from their ethercat_test           | -                                                        |
+* | MODE       | mode            | int    | -     | 3             | 0        | Powerless = 0; Powerfull = 3; Check the manual for others | -                                                        |
 *
 * The device can be launched by yarpdev using one of the following examples (with and without all optional parameters):
 * \code{.unparsed}
-* yarpdev --device xHandControlBoard --connection_type EtherCAT --RS485::port /dev/ttyXHAND --RS485::baudrate 3000000 --ETHERCAT::eth_ifname <optional_value>
+* yarpdev --device xHandControlBoard --connection_type EtherCAT --RS485::port /dev/ttyUSB0 --RS485::baudrate 3000000 --ETHERCAT::eth_ifname <optional_value> --PID::kp 225 --PID::ki 0 --PID::kd 12000 --TORQUE::tor_max 350 --MODE::mode 3
 * \endcode
 *
 * \code{.unparsed}
@@ -61,14 +66,24 @@ public:
     std::string m_provided_configuration;
 
     const std::string m_connection_type_defaultValue = {"EtherCAT"};
-    const std::string m_RS485_port_defaultValue = {"/dev/ttyXHAND"};
+    const std::string m_RS485_port_defaultValue = {"/dev/ttyUSB0"};
     const std::string m_RS485_baudrate_defaultValue = {"3000000"};
     const std::string m_ETHERCAT_eth_ifname_defaultValue = {""};
+    const std::string m_PID_kp_defaultValue = {"225"};
+    const std::string m_PID_ki_defaultValue = {"0"};
+    const std::string m_PID_kd_defaultValue = {"12000"};
+    const std::string m_TORQUE_tor_max_defaultValue = {"350"};
+    const std::string m_MODE_mode_defaultValue = {"3"};
 
     std::string m_connection_type = {"EtherCAT"};
-    std::string m_RS485_port = {"/dev/ttyXHAND"};
+    std::string m_RS485_port = {"/dev/ttyUSB0"};
     int m_RS485_baudrate = {3000000};
     std::string m_ETHERCAT_eth_ifname = {}; //This default value of this string is an empty string. It is highly recommended to provide a suggested value also for optional string parameters.
+    int m_PID_kp = {225};
+    int m_PID_ki = {0};
+    int m_PID_kd = {12000};
+    int m_TORQUE_tor_max = {350};
+    int m_MODE_mode = {3};
 
     bool          parseParams(const yarp::os::Searchable & config) override;
     std::string   getDeviceClassName() const override { return m_device_classname; }

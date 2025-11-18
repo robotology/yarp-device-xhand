@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Tue Nov 18 10:26:17 2025
+// Generated on: Tue Nov 18 17:26:55 2025
 
 
 #include "xHandControlBoard_ParamsParser.h"
@@ -32,6 +32,11 @@ std::vector<std::string> xHandControlBoard_ParamsParser::getListOfParams() const
     params.push_back("RS485::port");
     params.push_back("RS485::baudrate");
     params.push_back("ETHERCAT::eth_ifname");
+    params.push_back("PID::kp");
+    params.push_back("PID::ki");
+    params.push_back("PID::kd");
+    params.push_back("TORQUE::tor_max");
+    params.push_back("MODE::mode");
     return params;
 }
 
@@ -56,6 +61,31 @@ bool xHandControlBoard_ParamsParser::getParamValue(const std::string& paramName,
     if (paramName =="ETHERCAT::eth_ifname")
     {
         paramValue = m_ETHERCAT_eth_ifname;
+        return true;
+    }
+    if (paramName =="PID::kp")
+    {
+        paramValue = std::to_string(m_PID_kp);
+        return true;
+    }
+    if (paramName =="PID::ki")
+    {
+        paramValue = std::to_string(m_PID_ki);
+        return true;
+    }
+    if (paramName =="PID::kd")
+    {
+        paramValue = std::to_string(m_PID_kd);
+        return true;
+    }
+    if (paramName =="TORQUE::tor_max")
+    {
+        paramValue = std::to_string(m_TORQUE_tor_max);
+        return true;
+    }
+    if (paramName =="MODE::mode")
+    {
+        paramValue = std::to_string(m_MODE_mode);
         return true;
     }
 
@@ -149,6 +179,86 @@ bool      xHandControlBoard_ParamsParser::parseParams(const yarp::os::Searchable
         prop_check.unput("ETHERCAT::eth_ifname");
     }
 
+    //Parser of parameter PID::kp
+    {
+        yarp::os::Bottle sectionp;
+        sectionp = config.findGroup("PID");
+        if (sectionp.check("kp"))
+        {
+            m_PID_kp = sectionp.find("kp").asInt64();
+            yCInfo(xHandControlBoardParamsCOMPONENT) << "Parameter 'PID::kp' using value:" << m_PID_kp;
+        }
+        else
+        {
+            yCInfo(xHandControlBoardParamsCOMPONENT) << "Parameter 'PID::kp' using DEFAULT value:" << m_PID_kp;
+        }
+        prop_check.unput("PID::kp");
+    }
+
+    //Parser of parameter PID::ki
+    {
+        yarp::os::Bottle sectionp;
+        sectionp = config.findGroup("PID");
+        if (sectionp.check("ki"))
+        {
+            m_PID_ki = sectionp.find("ki").asInt64();
+            yCInfo(xHandControlBoardParamsCOMPONENT) << "Parameter 'PID::ki' using value:" << m_PID_ki;
+        }
+        else
+        {
+            yCInfo(xHandControlBoardParamsCOMPONENT) << "Parameter 'PID::ki' using DEFAULT value:" << m_PID_ki;
+        }
+        prop_check.unput("PID::ki");
+    }
+
+    //Parser of parameter PID::kd
+    {
+        yarp::os::Bottle sectionp;
+        sectionp = config.findGroup("PID");
+        if (sectionp.check("kd"))
+        {
+            m_PID_kd = sectionp.find("kd").asInt64();
+            yCInfo(xHandControlBoardParamsCOMPONENT) << "Parameter 'PID::kd' using value:" << m_PID_kd;
+        }
+        else
+        {
+            yCInfo(xHandControlBoardParamsCOMPONENT) << "Parameter 'PID::kd' using DEFAULT value:" << m_PID_kd;
+        }
+        prop_check.unput("PID::kd");
+    }
+
+    //Parser of parameter TORQUE::tor_max
+    {
+        yarp::os::Bottle sectionp;
+        sectionp = config.findGroup("TORQUE");
+        if (sectionp.check("tor_max"))
+        {
+            m_TORQUE_tor_max = sectionp.find("tor_max").asInt64();
+            yCInfo(xHandControlBoardParamsCOMPONENT) << "Parameter 'TORQUE::tor_max' using value:" << m_TORQUE_tor_max;
+        }
+        else
+        {
+            yCInfo(xHandControlBoardParamsCOMPONENT) << "Parameter 'TORQUE::tor_max' using DEFAULT value:" << m_TORQUE_tor_max;
+        }
+        prop_check.unput("TORQUE::tor_max");
+    }
+
+    //Parser of parameter MODE::mode
+    {
+        yarp::os::Bottle sectionp;
+        sectionp = config.findGroup("MODE");
+        if (sectionp.check("mode"))
+        {
+            m_MODE_mode = sectionp.find("mode").asInt64();
+            yCInfo(xHandControlBoardParamsCOMPONENT) << "Parameter 'MODE::mode' using value:" << m_MODE_mode;
+        }
+        else
+        {
+            yCInfo(xHandControlBoardParamsCOMPONENT) << "Parameter 'MODE::mode' using DEFAULT value:" << m_MODE_mode;
+        }
+        prop_check.unput("MODE::mode");
+    }
+
     /*
     //This code check if the user set some parameter which are not check by the parser
     //If the parser is set in strict mode, this will generate an error
@@ -189,9 +299,14 @@ std::string      xHandControlBoard_ParamsParser::getDocumentationOfDeviceParams(
     doc = doc + std::string("'RS485::port': Specify the port to use for the serial connection\n");
     doc = doc + std::string("'RS485::baudrate': Specify the baudrate for the serial connection\n");
     doc = doc + std::string("'ETHERCAT::eth_ifname': Specify the interface name for the ethercat connection\n");
+    doc = doc + std::string("'PID::kp': Finger motors P gain\n");
+    doc = doc + std::string("'PID::ki': Finger motors I gain\n");
+    doc = doc + std::string("'PID::kd': Finger motors D gain\n");
+    doc = doc + std::string("'TORQUE::tor_max': Note: 350 is the value from their ethercat_test\n");
+    doc = doc + std::string("'MODE::mode': Powerless = 0; Powerfull = 3; Check the manual for others\n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device xHandControlBoard --connection_type EtherCAT --RS485::port /dev/ttyXHAND --RS485::baudrate 3000000 --ETHERCAT::eth_ifname <optional_value>\n";
+    doc = doc + " yarpdev --device xHandControlBoard --connection_type EtherCAT --RS485::port /dev/ttyUSB0 --RS485::baudrate 3000000 --ETHERCAT::eth_ifname <optional_value> --PID::kp 225 --PID::ki 0 --PID::kd 12000 --TORQUE::tor_max 350 --MODE::mode 3\n";
     doc = doc + std::string("Using only mandatory params:\n");
     doc = doc + " yarpdev --device xHandControlBoard --connection_type EtherCAT\n";
     doc = doc + std::string("=============================================\n\n");    return doc;

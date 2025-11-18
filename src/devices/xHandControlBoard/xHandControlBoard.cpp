@@ -25,7 +25,7 @@ bool yarp::dev::xHandControlBoard::open(yarp::os::Searchable& config)
     // Looking for available devices
     std::vector<std::string> ifnames = m_XHCtrl.enumerate_devices(m_connection_type);
     if (ifnames.empty()) {
-        yError() << "No devices found for connection type: " << m_connection_type;
+        yCError(CB) << "No devices found for connection type: " << m_connection_type;
         return false;
     }
 
@@ -39,7 +39,7 @@ bool yarp::dev::xHandControlBoard::open(yarp::os::Searchable& config)
 
         if (ifnames_it == ifnames.end()){
             for (const auto& ifname : ifnames) {debugMsg+=ifname + " ";}
-            yError() << "Specified RS485 port" << m_RS485_port << "not found among available devices: " << debugMsg;
+            yCError(CB) << "Specified RS485 port" << m_RS485_port << "not found among available devices: " << debugMsg;
             return false;
         }
 
@@ -50,19 +50,19 @@ bool yarp::dev::xHandControlBoard::open(yarp::os::Searchable& config)
 
         if (ifnames_it == ifnames.end()){
             for (const auto& ifname : ifnames) {debugMsg+=ifname + " ";}
-            yError() << "Specified EtherCAT interface" << m_ETHERCAT_eth_ifname << "not found among available devices: " << debugMsg;
+            yCError(CB) << "Specified EtherCAT interface" << m_ETHERCAT_eth_ifname << "not found among available devices: " << debugMsg;
             return false;
         }
 
         ret = m_XHCtrl.open_ethercat(m_ETHERCAT_eth_ifname);
     }
     else{
-        yError() << "Unknown connection type: " << m_connection_type;
+        yCError(CB) << "Unknown connection type: " << m_connection_type;
         return false;
     }
 
     if (!ret){
-        yError() << "Failed to open " << m_connection_type;
+        yCError(CB) << "Failed to open " << m_connection_type;
         printErrorStruct(ret);
         return false;
     }
@@ -71,19 +71,19 @@ bool yarp::dev::xHandControlBoard::open(yarp::os::Searchable& config)
 
     std::vector<uint8_t> hand_list = m_XHCtrl.list_hands_id();
     if (hand_list.empty()){
-        yError() << "No hands found on the network.";
+        yCError(CB) << "No hands found on the network.";
         return false;
     }
 
     debugMsg.clear();
     for (const auto& hand : hand_list) {debugMsg+=std::to_string(hand) + " ";}
-    yDebug() << "Hand IDs:" << debugMsg;
-    m_id = hand_list[0]; // For now, we support only one hand
-    yDebug() << "Using hand with ID:" << static_cast<int>(m_id);
+    yCDebug(CB) << "Hand IDs:" << debugMsg;
+    m_id = hand_list[0]; //<---------------------------------------------------------------- For now, we support only one hand !!!
+    yCDebug(CB) << "Using hand with ID:" << static_cast<int>(m_id);
 
     // Give some time to the hand to be ready
     double delay = 1.0;
-    yInfo() << "Waiting " << delay << " s for the hand to be ready...";
+    yCInfo(CB) << "Waiting " << delay << " s for the hand to be ready...";
     yarp::os::Time::delay(delay);
 
     return true;
@@ -97,7 +97,7 @@ bool yarp::dev::xHandControlBoard::close()
 }
 
 void yarp::dev::xHandControlBoard::printErrorStruct(const xhand_control::ErrorStruct& err){
-    yError()    << " Read state failed" << err.error_code << "  " << err.error_message
+    yCError(CB)    << " Read state failed" << err.error_code << "  " << err.error_message
                 << "\n error_type: " << err.error_details.error_type
                 << "\n error_name: " << err.error_details.error_name;
 }
@@ -394,7 +394,7 @@ bool yarp::dev::xHandControlBoard::getEncoders(double* encs)
 
     if (!ret.first) {
         printErrorStruct(ret.first);
-        yError() << "See error(s) above.";
+        yCError(CB) << "See error(s) above.";
         return false;
     }
 
@@ -855,7 +855,27 @@ bool yarp::dev::xHandControlBoard::setPositions(const int n_joints, const int* j
 
 bool yarp::dev::xHandControlBoard::setPositions(const double* refs)
 {
-    return false;
+    HandCommand_t command;
+    memset(&command, 0, sizeof(command));
+    for(uint16_t finger_id = 0; finger_id < m_AXES; finger_id++){
+        command.finger_command[finger_id].id = finger_id;
+        command.finger_command[finger_id].position = deg2rad(refs[finger_id]);
+        command.finger_command[finger_id].kp = m_PID_kp;
+        command.finger_command[finger_id].ki = m_PID_ki;
+        command.finger_command[finger_id].kd = m_PID_kd;
+        command.finger_command[finger_id].mode = m_MODE_mode;
+        command.finger_command[finger_id].tor_max = m_TORQUE_tor_max;
+    }
+
+    auto err = m_XHCtrl.send_command(m_id, command);
+
+    if (!err){
+        printErrorStruct(err);
+        yCError(CB) << "See error(s) above.";
+        return false;
+    }
+
+    return true;
 }
 
 bool yarp::dev::xHandControlBoard::getRefPosition(const int joint, double* ref)

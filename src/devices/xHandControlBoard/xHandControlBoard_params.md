@@ -4,3 +4,8 @@
 |  RS485  | port                   | string | -        |   /dev/ttyUSB0              | No       | Specify the port to use for the serial connection      | Necessary only if using "RS485"           |
 |  RS485  | baudrate                      | int    | -        |   3000000                    | No       | Specify the baudrate for the serial connection         | Necessary only if using "RS485"           |
 | ETHERCAT | eth_ifname                    | string | -        |   -                     | No       | Specify the interface name for the ethercat connection | Necessary only if using "EtherCAT"         |
+|   PID      |    kp   | int | - |   225  | No | Finger motors P gain |
+|   PID      |    ki   | int | - |    0   | No | Finger motors I gain |
+|   PID      |    kd   | int | - |  12000 | No | Finger motors D gain |
+|   TORQUE   | tor_max | int | ? |  350 | No | Note: 350 is the value from their ethercat_test |
+|   MODE   | mode | int | - |  3 | No | Powerless = 0; Powerfull = 3; Check the manual for others |
