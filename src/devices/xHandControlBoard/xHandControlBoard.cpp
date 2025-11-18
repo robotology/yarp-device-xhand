@@ -405,6 +405,13 @@ bool yarp::dev::xHandControlBoard::getEncoders(double* encs)
 
 bool yarp::dev::xHandControlBoard::getEncodersTimed(double* encs, double* t)
 {
+    getEncoders(encs);
+    // t should be an array of size encs.size() and filled with the same timestamp yarp::os::time::now()
+    double timestamp = yarp::os::Time::now();
+    for (size_t i = 0; i < m_AXES; i++) {
+        t[i] = timestamp;
+    }
+
     return false;
 }
 
