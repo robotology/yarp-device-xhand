@@ -26,6 +26,7 @@ namespace yarp::dev
 
 
 class yarp::dev::xHandControlBoard :
+    public xHandControlBoard_ParamsParser,
     public yarp::dev::DeviceDriver,
     public yarp::dev::IPidControl,
     public yarp::dev::IPositionControl,
@@ -437,6 +438,11 @@ public:
 
 private:
 
+    xhand_control::XHandControl m_XHCtrl{};
+    uint8_t m_id{0};
+    const int m_AXES{12};
+
+    void printErrorStruct(const xhand_control::ErrorStruct& err);
 
 };
 #endif

@@ -2,4 +2,4 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 add_subdirectory(devices)
-add_subdirectory(tests)
+add_subdirectory(xhand-tests)

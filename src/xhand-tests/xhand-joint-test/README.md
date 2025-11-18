@@ -1,4 +1,4 @@
-# Build, install and setup environment 
+# Build, install and environment setup 
 
 ```
 cd yarp-device-xhand/build
@@ -7,6 +7,12 @@ make install -j
 export PATH=$PATH:</path/to/install>/bin
 export YARP_DATA_DIRS=$YARP_DATA_DIRS:</path/to/install>/share/yarp
 ```
+
+## Reduce USB latency timer and create `ttyXHAND` symlink 
+
+Copy the [99-xhand.rules](/src/tests/99-xhand.rules) in `/etc/udev/rules.d` to:
+- reduce the USB latency timer to `1 ms`;
+- create a SYMLINK `ttyXHAND` fot the hand.
 
 ## Give the binary the network / realtime capabilities it needs
 
@@ -28,12 +34,6 @@ Remark: every time you install the exe you should repeat the above steps.
 ```
 sudo setcap -r </path/to/install>/bin/xhand-joint-test
 ```
-
-## Reduce USB latency timer
-
-Copy the [99-xhand.rules](/src/tests/99-xhand.rules) in `/etc/udev/rules.d` to:
-- reduce the USB latency timer to `1 ms`;
-- create a SYMLINK `ttyXHAND` fot the hand.
 
 # Plot results
 

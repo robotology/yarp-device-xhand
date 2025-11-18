@@ -1,6 +1,6 @@
 | Group |  Parameter                    | Type   | Units    | Default Value                | Required  | Description                                            | Notes                                      |
 |:-----:|:-----------------------------:|:------:|:--------:|:----------------------------:|:---------:|:------------------------------------------------------:|:------------------------------------------:|
-|       | connection_type               | string | -        |   -                          | Yes       | Specify the connection type                            | Can be either "serial" or "ethercat"       |
-|       | serial_port                   | string | -        |   -                          | Yes       | Specify the port to use for the serial connection      | Necessary only if using "serial"           |
-|       | baudrate                      | int    | -        |   -                          | Yes       | Specify the baudrate for the serial connection         | Necessary only if using "serial"           |
-|       | eth_ifname                    | string | -        |   -                          | Yes       | Specify the interface name for the ethercat connection | Necessary only if using "ethercat"         |
+|       | connection_type               | string | -        |   EtherCAT                   | Yes       | Specify the connection type                            | Can be either "RS485" (USB) or "EtherCAT" (ethernet)       |
+|  RS485  | port                   | string | -        |   /dev/ttyUSB0              | No       | Specify the port to use for the serial connection      | Necessary only if using "RS485"           |
+|  RS485  | baudrate                      | int    | -        |   3000000                    | No       | Specify the baudrate for the serial connection         | Necessary only if using "RS485"           |
+| ETHERCAT | eth_ifname                    | string | -        |   -                     | No       | Specify the interface name for the ethercat connection | Necessary only if using "EtherCAT"         |

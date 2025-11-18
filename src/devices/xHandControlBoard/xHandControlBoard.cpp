@@ -7,18 +7,99 @@
 YARP_DECLARE_LOG_COMPONENT(CB)
 YARP_LOG_COMPONENT(CB, "yarp.device.xHandControlBoard")
 
+# define rad2deg(x) ((x)*180.0/M_PI)
+# define deg2rad(x) ((x)*M_PI/180.0)
+
 yarp::dev::xHandControlBoard::~xHandControlBoard()
 {
 }
 
 bool yarp::dev::xHandControlBoard::open(yarp::os::Searchable& config)
 {
-    return false;
+    if (!parseParams(config))
+    {
+        yCError(CB) << "Failed to parse parameters for xHandControlBoard.";
+        return false;
+    }
+
+    // Looking for available devices
+    std::vector<std::string> ifnames = m_XHCtrl.enumerate_devices(m_connection_type);
+    if (ifnames.empty()) {
+        yError() << "No devices found for connection type: " << m_connection_type;
+        return false;
+    }
+
+    std::string debugMsg{};
+
+    xhand_control::ErrorStruct ret;
+    std::vector<std::string>::iterator ifnames_it{};
+    if (m_connection_type == "RS485"){
+
+        ifnames_it = std::find(ifnames.begin(), ifnames.end(), m_RS485_port);
+
+        if (ifnames_it == ifnames.end()){
+            for (const auto& ifname : ifnames) {debugMsg+=ifname + " ";}
+            yError() << "Specified RS485 port" << m_RS485_port << "not found among available devices: " << debugMsg;
+            return false;
+        }
+
+        ret = m_XHCtrl.open_serial(m_RS485_port, m_RS485_baudrate);
+    }       
+    else if (m_connection_type == "EtherCAT"){
+        ifnames_it = std::find(ifnames.begin(), ifnames.end(), m_ETHERCAT_eth_ifname);
+
+        if (ifnames_it == ifnames.end()){
+            for (const auto& ifname : ifnames) {debugMsg+=ifname + " ";}
+            yError() << "Specified EtherCAT interface" << m_ETHERCAT_eth_ifname << "not found among available devices: " << debugMsg;
+            return false;
+        }
+
+        ret = m_XHCtrl.open_ethercat(m_ETHERCAT_eth_ifname);
+    }
+    else{
+        yError() << "Unknown connection type: " << m_connection_type;
+        return false;
+    }
+
+    if (!ret){
+        yError() << "Failed to open " << m_connection_type;
+        printErrorStruct(ret);
+        return false;
+    }
+
+    yDebug() << "Successfully connected to " << (m_connection_type == "RS485" ? m_RS485_port : m_ETHERCAT_eth_ifname);
+
+    std::vector<uint8_t> hand_list = m_XHCtrl.list_hands_id();
+    if (hand_list.empty()){
+        yError() << "No hands found on the network.";
+        return false;
+    }
+
+    debugMsg.clear();
+    for (const auto& hand : hand_list) {debugMsg+=std::to_string(hand) + " ";}
+    yDebug() << "Hand IDs:" << debugMsg;
+    m_id = hand_list[0]; // For now, we support only one hand
+    yDebug() << "Using hand with ID:" << static_cast<int>(m_id);
+
+    // Give some time to the hand to be ready
+    double delay = 1.0;
+    yInfo() << "Waiting " << delay << " s for the hand to be ready...";
+    yarp::os::Time::delay(delay);
+
+    return true;
 }
 
 bool yarp::dev::xHandControlBoard::close()
 {
-    return false;
+    m_XHCtrl.close_device();
+
+    return true;
+}
+
+void yarp::dev::xHandControlBoard::printErrorStruct(const xhand_control::ErrorStruct& err){
+    yError()    << " Read state failed" << err.error_code << "  " << err.error_message
+                << "\n error_type: " << err.error_details.error_type
+                << "\n error_name: " << err.error_details.error_name;
 }
 
 bool yarp::dev::xHandControlBoard::setPid(const yarp::dev::PidControlTypeEnum& pidtype, int j, const yarp::dev::Pid& p)
@@ -128,7 +209,8 @@ bool yarp::dev::xHandControlBoard::isPidEnabled(const yarp::dev::PidControlTypeE
 
 bool yarp::dev::xHandControlBoard::getAxes(int* ax)
 {
-    return false;
+    *ax = m_AXES;
+    return true;
 }
 
 bool yarp::dev::xHandControlBoard::positionMove(int j, double ref)
@@ -308,7 +390,17 @@ bool yarp::dev::xHandControlBoard::getEncoder(int j, double* v)
 
 bool yarp::dev::xHandControlBoard::getEncoders(double* encs)
 {
-    return false;
+    std::pair<xhand_control::ErrorStruct, HandState_t> ret = m_XHCtrl.read_state(m_id, true);
+
+    if (!ret.first) {
+        printErrorStruct(ret.first);
+        yError() << "See error(s) above.";
+        return false;
+    }
+
+    for(size_t f=0; f< m_AXES; f++){encs[f] = rad2deg(static_cast<double>(ret.second.finger_state[f].position));}
+
+    return true;
 }
 
 bool yarp::dev::xHandControlBoard::getEncodersTimed(double* encs, double* t)
