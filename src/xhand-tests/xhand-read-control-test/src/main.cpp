@@ -5,11 +5,11 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/ResourceFinder.h>
 
-#include <xhand-joint-test/module.h>
+#include <xhand-read-control-test/module.h>
 
 int main(int argc, char** argv)
 {
-    const std::string module_name = "xhand-joint-test";
+    const std::string module_name = "xhand-read-control-test";
 
     /* Check YARP network. */
     yarp::os::Network yarp;

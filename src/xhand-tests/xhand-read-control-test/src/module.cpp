@@ -1,4 +1,4 @@
-#include <xhand-joint-test/module.h>
+#include <xhand-read-control-test/module.h>
 #include <yarp/os/LogStream.h>
 
 
@@ -9,7 +9,7 @@ Module::Module(const std::string &module_name): yarp::os::RFModule(),
 bool Module::updateModule(){
 
     static auto tic = std::chrono::high_resolution_clock::now();
-    bool readFirst = false;
+    bool readFirst = true;
     bool force_update = true;
     if(!xhand_->test(readFirst, force_update, std::vector<float>(12, 0.0f))){
         yError() << "[" + class_name_ + "::" + __func__ + "] Test Stopped.";

@@ -1,4 +1,4 @@
-set(EXE_TARGET_NAME xhand-joint-test)
+set(EXE_TARGET_NAME xhand-control-test)
 
 # YARP
 find_package(YARP REQUIRED COMPONENTS

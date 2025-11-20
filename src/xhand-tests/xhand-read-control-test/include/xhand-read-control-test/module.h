@@ -1,10 +1,10 @@
-#ifndef XHAND_JOINT_TEST_MODULE_H
-#define XHAND_JOINT_TEST_MODULE_H
+#ifndef XHAND_READ_CONTROL_TEST_MODULE_H
+#define XHAND_READ_CONTROL_TEST_MODULE_H
 
 #include <string>
 #include <yarp/os/RFModule.h>
 #include "xhand_control.hpp"
-#include "xhand-joint-test/xhand.h"
+#include "xhand-read-control-test/xhand.h"
 
 
 class Module : public yarp::os::RFModule
@@ -36,4 +36,4 @@ private:
     void printErrorStruct(const xhand_control::ErrorStruct& err);
 };
 
-#endif /* XHAND_JOINT_TEST_MODULE_H */
+#endif /* XHAND_READ_CONTROL_TEST_MODULE_H */

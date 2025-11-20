@@ -1,4 +1,4 @@
-#include <xhand-joint-test/module.h>
+#include <xhand-read-control-test/module.h>
 #include <yarp/os/LogStream.h>
 
 

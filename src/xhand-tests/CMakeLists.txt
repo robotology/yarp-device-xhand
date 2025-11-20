@@ -1,1 +1,4 @@
-add_subdirectory(xhand-joint-test)
+add_subdirectory(xhand-read-control-test)
+add_subdirectory(xhand-control-test)
+add_subdirectory(xhand-read-test)
+add_subdirectory(xhand-multithread-test)

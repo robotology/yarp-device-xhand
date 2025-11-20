@@ -1,4 +1,4 @@
-#include "xhand-joint-test/xhand.h"
+#include "xhand-read-test/xhand.h"
 #include <yarp/os/LogStream.h>
 
 #include <chrono>
@@ -72,9 +72,9 @@ bool xHAND::init(std::string connection, int16_t kp, int16_t ki, int16_t kd, uin
 
 bool xHAND::updateHandState(bool force_update){
 
-    auto tic = std::chrono::high_resolution_clock::now();
+    auto t1 = std::chrono::high_resolution_clock::now();
     auto ret = m_ctrl.read_state(m_id, force_update);
-    auto toc = std::chrono::high_resolution_clock::now();
+    auto t2 = std::chrono::high_resolution_clock::now();
 
     if (!ret.first) {
         printErrorStruct(ret.first);
@@ -93,6 +93,11 @@ bool xHAND::updateHandState(bool force_update){
     // }
 
     return true;
+}
+
+
+std::pair<xhand_control::ErrorStruct, HandState_t> xHAND::readState(bool force_update){
+    return m_ctrl.read_state(m_id, force_update);
 }
 
 
@@ -120,7 +125,6 @@ bool xHAND::sendCommand(const std::vector<float>& finger_positions){
     return true;
 }
 
-
 bool xHAND::test(bool readFirst, bool force_update, const std::vector<float>& finger_positions){
 
     static const int test_size{1000};
@@ -144,20 +148,26 @@ bool xHAND::test(bool readFirst, bool force_update, const std::vector<float>& fi
 
     xhand_control::ErrorStruct send_command_ret;
     std::pair<xhand_control::ErrorStruct, HandState_t> read_state_ret;
-    std::chrono::_V2::system_clock::time_point tic, toc, tac;
+    std::chrono::_V2::system_clock::time_point t1, t2, t2_bis, t3;
+
+    const std::chrono::milliseconds delay_ms{50};
 
     if(readFirst){
-        tic = std::chrono::high_resolution_clock::now();
+        t1 = std::chrono::high_resolution_clock::now();
         read_state_ret = m_ctrl.read_state(m_id, force_update);
-        toc = std::chrono::high_resolution_clock::now();
+        t2 = std::chrono::high_resolution_clock::now();
+        std::this_thread::sleep_for(delay_ms);
+        t2_bis = std::chrono::high_resolution_clock::now();
         send_command_ret = m_ctrl.send_command(m_id, command);
-        tac = std::chrono::high_resolution_clock::now();
+        t3 = std::chrono::high_resolution_clock::now();
     }else{
-        tic = std::chrono::high_resolution_clock::now();
+        t1 = std::chrono::high_resolution_clock::now();
         send_command_ret = m_ctrl.send_command(m_id, command);
-        toc = std::chrono::high_resolution_clock::now();
+        t2 = std::chrono::high_resolution_clock::now();
+        std::this_thread::sleep_for(delay_ms);
+        t2_bis = std::chrono::high_resolution_clock::now();
         read_state_ret = m_ctrl.read_state(m_id, force_update);
-        tac = std::chrono::high_resolution_clock::now();
+        t3 = std::chrono::high_resolution_clock::now();
     }
 
     if (!read_state_ret.first) {
@@ -172,13 +182,13 @@ bool xHAND::test(bool readFirst, bool force_update, const std::vector<float>& fi
     }
 
     if(readFirst){
-        read_time.push_back(std::chrono::duration<double, std::milli>(toc - tic).count());
-        control_time.push_back(std::chrono::duration<double, std::milli>(tac - toc).count());
+        read_time.push_back(std::chrono::duration<double, std::milli>(t2 - t1).count());
+        control_time.push_back(std::chrono::duration<double, std::milli>(t3 - t2_bis).count());
     }else{
-        control_time.push_back(std::chrono::duration<double, std::milli>(toc - tic).count());
-        read_time.push_back(std::chrono::duration<double, std::milli>(tac - toc).count());
+        control_time.push_back(std::chrono::duration<double, std::milli>(t2 - t1).count());
+        read_time.push_back(std::chrono::duration<double, std::milli>(t3 - t2_bis).count());
     }
-    test_time.push_back(std::chrono::duration<double, std::milli>(tac - tic).count());
+    test_time.push_back(std::chrono::duration<double, std::milli>(t3 - t2_bis + t2 - t1).count());
 
 
     yInfo() << "[" + class_name_ + "::" + __func__ + "]"
@@ -187,14 +197,14 @@ bool xHAND::test(bool readFirst, bool force_update, const std::vector<float>& fi
 
 
     if(read_time.size() >= test_size){
-        double read_time_avg = std::accumulate(read_time.begin(), read_time.end(), 0.0) / read_time.size();
+        double read_time_1_avg = std::accumulate(read_time.begin(), read_time.end(), 0.0) / read_time.size();
         double control_time_avg = std::accumulate(control_time.begin(), control_time.end(), 0.0) / control_time.size();
         double test_time_avg = std::accumulate(test_time.begin(), test_time.end(), 0.0) / test_time.size();
 
         double read_time_std = 0.0, control_time_std = 0.0, test_time_std = 0.0;
 
         for(size_t i = 0; i < test_time.size(); i++){
-            read_time_std += std::pow(read_time[i] - read_time_avg, 2);
+            read_time_std += std::pow(read_time[i] - read_time_1_avg, 2);
             control_time_std += std::pow(control_time[i] - control_time_avg, 2);
             test_time_std += std::pow(test_time[i] - test_time_avg, 2);
         }
@@ -208,7 +218,7 @@ bool xHAND::test(bool readFirst, bool force_update, const std::vector<float>& fi
         << "\nRead state time [ms] - first: " << read_time.front() << " , second last: " << read_time[read_time.size() - 2] << " , last: " << read_time.back()
         << "\nSend command time [ms] - first: " << control_time.front() << " , second last: " << control_time[control_time.size() - 2] << " , last: " << control_time.back()
         << "\nTotal test time [ms] - first: " << test_time.front() << " , second last: " << test_time[test_time.size() - 2] << " , last: " << test_time.back()
-        << "\nRead state time [ms] - avg: " << read_time_avg << " , std: " << read_time_std
+        << "\nRead state time [ms] - avg: " << read_time_1_avg << " , std: " << read_time_std
         << "\nSend command time [ms] - avg: " << control_time_avg << " , std: " << control_time_std
         << "\nTotal test time [ms] - avg: " << test_time_avg << " , std: " << test_time_std;
 
