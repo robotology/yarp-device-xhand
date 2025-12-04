@@ -19,7 +19,7 @@ Copy the [99-xhand.rules](/src/tests/99-xhand.rules) in `/etc/udev/rules.d` to:
 Grant capabilities so you can run as normal user:
 
 ```
-sudo setcap 'cap_net_raw,cap_net_admin,cap_sys_nice,cap_ipc_lock+ep' </path/to/install>/bin/xhand-joint-test
+sudo setcap 'cap_net_raw,cap_net_admin,cap_sys_nice,cap_ipc_lock+ep' </path/to/install>/bin/xhand-multithread-test
 ```
 
 Verify:

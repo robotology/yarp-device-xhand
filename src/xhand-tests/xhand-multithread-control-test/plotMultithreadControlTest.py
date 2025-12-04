@@ -38,10 +38,18 @@ def main():
         series = data[:, i]
         mean = means[i]
         std = stds[i]
+        bins = series.size // 100 if series.size // 100 > 10 else 10
+
+        counts, bin_edges = np.histogram(series, bins=bins)
+        max_bin_index = np.argmax(counts)
+        mode = 0.5 * (bin_edges[max_bin_index] + bin_edges[max_bin_index + 1])
+        mode_perc = (counts[max_bin_index] / series.size) * 100 if series.size > 0 else 0
+
         ax.plot(samples, series, marker='o', linestyle='none', color=colors[i % len(colors)])
         ax.axhline(mean, color='k', linestyle='--', linewidth=0.9, label=f"mean={mean:.3f} {time_unit}")
         ax.fill_between(samples, mean - std, mean + std, color=colors[i % len(colors)], alpha=0.15,
                         label=f"±1σ={std:.3f} {time_unit}")
+        ax.axhline(mode, color=colors[i % len(colors)], linestyle=':', linewidth=0.9, label=f"mode={mode:.3f} {time_unit}")
         ax.set_ylabel(f"[{time_unit}]")
         ax.set_title(header[i])
         ax.grid(True, linestyle='--', alpha=0.4)
@@ -73,6 +81,7 @@ def main():
 
         ax.set_ylim(0, counts[max_bin_index] * 1.1)
         ax.hist(series, bins=bins, color=colors[i % len(colors)], alpha=0.7)
+        ax.set_xscale('log')
         stats_table = [
             ["mean", f"{mean:.3f} {time_unit}"],
             ["std",  f"{std:.3f} {time_unit}"],

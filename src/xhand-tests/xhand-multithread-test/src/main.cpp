@@ -49,10 +49,12 @@ int main(int argc, char** argv)
         command.finger_command[finger].tor_max = static_cast<uint16_t>(tor_max);
     }
 
-    std::vector<double> read_durations, ctrl_durations{};
+    std::vector<int64_t> read_timestamps{}, ctrl_timestamps{}, readCycleTime{}, controlCycleTime{};
     const int num_tests{1000000};
-    read_durations.reserve(num_tests);
-    ctrl_durations.reserve(num_tests);
+    read_timestamps.reserve(num_tests);
+    ctrl_timestamps.reserve(num_tests);
+    readCycleTime.reserve(num_tests);
+    controlCycleTime.reserve(num_tests);
 
     std::cout << "Starting test of " << num_tests << " calls..." << std::endl;
     std::pair<xhand_control::ErrorStruct, HandState_t>  read_ret;
@@ -64,34 +66,28 @@ int main(int argc, char** argv)
     std::atomic<bool> failed{false};
 
     auto reader = [&](){
-        auto t_prev = std::chrono::high_resolution_clock::now();
         for (int i = 0; i < num_tests; ++i) {
+            auto start = std::chrono::high_resolution_clock::now();
+            read_timestamps.push_back((std::chrono::duration_cast<std::chrono::nanoseconds>(start.time_since_epoch()).count()));
             auto local_read = xhand->readState(true);
             if (!local_read.first) {
                 failed.store(true, std::memory_order_relaxed);
                 break;
             }
-            auto t_now = std::chrono::high_resolution_clock::now();
-            read_durations.push_back(
-                static_cast<double>(std::chrono::duration_cast<std::chrono::nanoseconds>(t_now - t_prev).count())
-            );
-            t_prev = t_now;
+            readCycleTime.push_back((std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count()) - read_timestamps.back());
         }
     };
 
     auto sender = [&](){
-        auto t_prev = std::chrono::high_resolution_clock::now();
         for (int i = 0; i < num_tests; ++i) {
+            auto start = std::chrono::high_resolution_clock::now();
+            ctrl_timestamps.push_back((std::chrono::duration_cast<std::chrono::nanoseconds>(start.time_since_epoch()).count()));
             auto local_ctrl = xhand->sendCommand(command);
             if (!local_ctrl) {
                 failed.store(true, std::memory_order_relaxed);
                 break;
             }
-            auto t_now = std::chrono::high_resolution_clock::now();
-            ctrl_durations.push_back(
-                static_cast<double>(std::chrono::duration_cast<std::chrono::nanoseconds>(t_now - t_prev).count())
-            );
-            t_prev = t_now;
+            controlCycleTime.push_back((std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count()) - ctrl_timestamps.back());
         }
     };
 
@@ -117,14 +113,11 @@ int main(int argc, char** argv)
      std::ofstream results_file;
      std::string filename = "xhand-multithread-test.csv";
      results_file.open(filename);
-     results_file << "ReadTime,ControlTime\n";
-     std::cout << "\n\n\nReadDurations\tControlDurations:";
+     results_file << "ReadTimestamp,ControlTimestamp,readCycleTime,controlCycleTime\n";
 
     // write rows up to the minimum available samples for each vector
-    size_t rows = std::min(read_durations.size(), ctrl_durations.size());
-    for (size_t i = 0; i < rows; ++i) {
-        results_file << read_durations[i] << "," << ctrl_durations[i] << "\n";
-        std::cout << "\nDuration " << i << ": " << read_durations[i] << " ns" << "\t" << ctrl_durations[i] << " ns";
+    for (size_t i = 0; i < num_tests; ++i) {
+        results_file << read_timestamps[i] << "," << ctrl_timestamps[i] << "," << readCycleTime[i] << "," << controlCycleTime[i] << "\n";
     }
      results_file.close();
      std::cout << "\nResults saved to " << filename << std::endl;
