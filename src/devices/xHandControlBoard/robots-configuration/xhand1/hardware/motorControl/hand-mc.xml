@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE devices PUBLIC "-//YARP//DTD yarprobotinterface 3.0//EN" "http://www.yarp.it/DTD/yarprobotinterfaceV3.0.dtd">
+
+
+
+<device xmlns:xi="http://www.w3.org/2001/XInclude" name="xhand-mc" type="xHandControlBoard">
+
+    <!-- <group name=""> -->
+    <param name="connection_type">  EtherCAT    </param> 
+    <!-- </group> -->
+
+    <group name="ETHERCAT">
+        <param name="eth_ifname"> enp0s31f6 </param>
+    </group>
+    
+    <group name="PID">
+        <param name="kp">       225                 </param>
+        <param name="ki">       0                   </param>
+        <param name="kd">       12000               </param>
+    </group>
+
+    <group name="GENERAL">
+        <param name="Joints"> 12 </param>
+    </group>
+    	
+    <group name="LIMITS">
+        <param name="jntPosMax">105.0 90.0 105.0 10.0 110.0 110.0 110.0 110.0 110.0 110.0 110.0 110.0</param>
+        <param name="jntPosMin">0.0 -60.0 -10.0 -10.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0</param>
+    </group>
+            
+</device>

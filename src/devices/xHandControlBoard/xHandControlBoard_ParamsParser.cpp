@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Thu Nov 20 11:27:52 2025
+// Generated on: Wed Jan 28 17:29:25 2026
 
 
 #include "xHandControlBoard_ParamsParser.h"
@@ -22,6 +22,44 @@ namespace {
 
 xHandControlBoard_ParamsParser::xHandControlBoard_ParamsParser()
 {
+    //Default value of parameterLIMITS_jntPosMin
+    {
+        m_LIMITS_jntPosMin.clear();
+        yarp::os::Value tempVal;
+        tempVal.fromString(m_LIMITS_jntPosMin_defaultValue.c_str());
+        yarp::os::Bottle* tempBot = tempVal.asList();
+        if (tempBot && tempBot->size()!=0)
+        {
+            for (size_t i=0; i<tempBot->size(); i++)
+            {
+                m_LIMITS_jntPosMin.push_back(tempBot->get(i).asFloat64());
+            }
+        }
+        else
+        {
+             yError() <<"parameter 'LIMITS_jntPosMin' is not a properly formatted bottle";
+        }
+    }
+
+    //Default value of parameterLIMITS_jntPosMax
+    {
+        m_LIMITS_jntPosMax.clear();
+        yarp::os::Value tempVal;
+        tempVal.fromString(m_LIMITS_jntPosMax_defaultValue.c_str());
+        yarp::os::Bottle* tempBot = tempVal.asList();
+        if (tempBot && tempBot->size()!=0)
+        {
+            for (size_t i=0; i<tempBot->size(); i++)
+            {
+                m_LIMITS_jntPosMax.push_back(tempBot->get(i).asFloat64());
+            }
+        }
+        else
+        {
+             yError() <<"parameter 'LIMITS_jntPosMax' is not a properly formatted bottle";
+        }
+    }
+
 }
 
 
@@ -37,6 +75,8 @@ std::vector<std::string> xHandControlBoard_ParamsParser::getListOfParams() const
     params.push_back("PID::kd");
     params.push_back("TORQUE::tor_max");
     params.push_back("MODE::mode");
+    params.push_back("LIMITS::jntPosMin");
+    params.push_back("LIMITS::jntPosMax");
     return params;
 }
 
@@ -87,6 +127,14 @@ bool xHandControlBoard_ParamsParser::getParamValue(const std::string& paramName,
     {
         paramValue = std::to_string(m_MODE_mode);
         return true;
+    }
+    if (paramName =="LIMITS::jntPosMin")
+    {
+        return false;
+    }
+    if (paramName =="LIMITS::jntPosMax")
+    {
+        return false;
     }
 
     yError() <<"parameter '" << paramName << "' was not found";
@@ -259,6 +307,68 @@ bool      xHandControlBoard_ParamsParser::parseParams(const yarp::os::Searchable
         prop_check.unput("MODE::mode");
     }
 
+    //Parser of parameter LIMITS::jntPosMin
+    {
+        yarp::os::Bottle sectionp;
+        sectionp = config.findGroup("LIMITS");
+        if (sectionp.check("jntPosMin"))
+        {
+            {
+                m_LIMITS_jntPosMin.clear();
+                yarp::os::Bottle* tempBot = sectionp.find("jntPosMin").asList();
+                if (tempBot)
+                {
+                    std::string tempBots = tempBot->toString();
+                    for (size_t i=0; i<tempBot->size(); i++)
+                    {
+                        m_LIMITS_jntPosMin.push_back(tempBot->get(i).asFloat64());
+                    }
+                }
+                else
+                {
+                     yCError(xHandControlBoardParamsCOMPONENT) <<"parameter 'LIMITS_jntPosMin' is not a properly formatted bottle";
+                }
+            }
+            yCInfo(xHandControlBoardParamsCOMPONENT) << "Parameter 'LIMITS::jntPosMin' using value:" << m_LIMITS_jntPosMin;
+        }
+        else
+        {
+            yCInfo(xHandControlBoardParamsCOMPONENT) << "Parameter 'LIMITS::jntPosMin' using DEFAULT value:" << m_LIMITS_jntPosMin;
+        }
+        prop_check.unput("LIMITS::jntPosMin");
+    }
+
+    //Parser of parameter LIMITS::jntPosMax
+    {
+        yarp::os::Bottle sectionp;
+        sectionp = config.findGroup("LIMITS");
+        if (sectionp.check("jntPosMax"))
+        {
+            {
+                m_LIMITS_jntPosMax.clear();
+                yarp::os::Bottle* tempBot = sectionp.find("jntPosMax").asList();
+                if (tempBot)
+                {
+                    std::string tempBots = tempBot->toString();
+                    for (size_t i=0; i<tempBot->size(); i++)
+                    {
+                        m_LIMITS_jntPosMax.push_back(tempBot->get(i).asFloat64());
+                    }
+                }
+                else
+                {
+                     yCError(xHandControlBoardParamsCOMPONENT) <<"parameter 'LIMITS_jntPosMax' is not a properly formatted bottle";
+                }
+            }
+            yCInfo(xHandControlBoardParamsCOMPONENT) << "Parameter 'LIMITS::jntPosMax' using value:" << m_LIMITS_jntPosMax;
+        }
+        else
+        {
+            yCInfo(xHandControlBoardParamsCOMPONENT) << "Parameter 'LIMITS::jntPosMax' using DEFAULT value:" << m_LIMITS_jntPosMax;
+        }
+        prop_check.unput("LIMITS::jntPosMax");
+    }
+
     /*
     //This code check if the user set some parameter which are not check by the parser
     //If the parser is set in strict mode, this will generate an error
@@ -304,9 +414,11 @@ std::string      xHandControlBoard_ParamsParser::getDocumentationOfDeviceParams(
     doc = doc + std::string("'PID::kd': Finger motors D gain\n");
     doc = doc + std::string("'TORQUE::tor_max': Note: 350 is the value from their ethercat_test\n");
     doc = doc + std::string("'MODE::mode': Powerless = 0; Powerfull = 3; Check the manual for others\n");
+    doc = doc + std::string("'LIMITS::jntPosMin': \n");
+    doc = doc + std::string("'LIMITS::jntPosMax': \n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device xHandControlBoard --connection_type EtherCAT --RS485::port /dev/ttyUSB0 --RS485::baudrate 3000000 --ETHERCAT::eth_ifname <optional_value> --PID::kp 225 --PID::ki 0 --PID::kd 12000 --TORQUE::tor_max 350 --MODE::mode 3\n";
+    doc = doc + " yarpdev --device xHandControlBoard --connection_type EtherCAT --RS485::port /dev/ttyUSB0 --RS485::baudrate 3000000 --ETHERCAT::eth_ifname <optional_value> --PID::kp 225 --PID::ki 0 --PID::kd 12000 --TORQUE::tor_max 350 --MODE::mode 3 --LIMITS::jntPosMin \" (0.0 -60.0 -10.0 -10.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0) \" --LIMITS::jntPosMax \" (105.0 90.0 105.0 10.0 110.0 110.0 110.0 110.0 110.0 110.0 110.0 110.0) \"\n";
     doc = doc + std::string("Using only mandatory params:\n");
     doc = doc + " yarpdev --device xHandControlBoard --connection_type EtherCAT\n";
     doc = doc + std::string("=============================================\n\n");    return doc;

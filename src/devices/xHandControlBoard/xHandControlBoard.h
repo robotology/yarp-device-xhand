@@ -7,6 +7,7 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/IPreciselyTimed.h>
+#include <yarp/os/PeriodicThread.h>
 
 #include <xhand_control.hpp>
 
@@ -48,11 +49,12 @@ class yarp::dev::xHandControlBoard :
     public yarp::dev::IPreciselyTimed,
     public yarp::dev::IInteractionMode,
     public yarp::dev::IRemoteVariables,
-    public yarp::dev::IJointFault
+    public yarp::dev::IJointFault,
+    public yarp::os::PeriodicThread
 {
 
 public:
-    xHandControlBoard() = default;
+    xHandControlBoard();
     ~xHandControlBoard() override;
 
     /* DeviceDriver methods */
@@ -436,11 +438,23 @@ public:
 
     bool getRefCurrent(int m, double* curr) override;
 
+    //PeriodicThread
+    void run() override;
+    bool threadInit() override;
+    void threadRelease() override;
+
 private:
 
     xhand_control::XHandControl m_XHCtrl{};
     uint8_t m_id{0};
     const int m_AXES{12};
+    yarp::dev::Pid* m_ppids{}, *m_vpids{}, *m_cpids{}, *m_tpids{};
+    int* m_controlModes{};
+    struct HANDSTATE{
+        double timestamp{0.0};
+        HandState_t state;
+    }m_handState;
+    std::mutex m_mutex;
 
     void printErrorStruct(const xhand_control::ErrorStruct& err);
 
