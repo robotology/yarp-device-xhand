@@ -447,7 +447,6 @@ private:
 
     xhand_control::XHandControl m_XHCtrl{};
     uint8_t m_id{0};
-    const int m_AXES{12};
     yarp::dev::Pid* m_ppids{}, *m_vpids{}, *m_cpids{}, *m_tpids{};
     int* m_controlModes{};
     struct HANDSTATE{
@@ -455,8 +454,10 @@ private:
         HandState_t state;
     }m_handState;
     std::mutex m_mutex;
+    HandCommand_t m_handCommand;
 
     void printErrorStruct(const xhand_control::ErrorStruct& err);
+    bool sendCommandToHand(const uint8_t hand_id, const HandCommand_t& command);
 
 };
 #endif

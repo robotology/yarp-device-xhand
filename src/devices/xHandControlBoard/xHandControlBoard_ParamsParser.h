@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Wed Jan 28 17:29:25 2026
+// Generated on: Thu Jan 29 14:50:43 2026
 
 
 #ifndef XHANDCONTROLBOARD_PARAMSPARSER_H

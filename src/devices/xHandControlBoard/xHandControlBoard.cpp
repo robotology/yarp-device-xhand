@@ -86,24 +86,6 @@ bool yarp::dev::xHandControlBoard::open(yarp::os::Searchable& config)
     m_id = hand_list[0]; //<---------------------------------------------------------------- For now, we support only one hand !!!
     yCDebug(CB) << "Using hand with ID:" << static_cast<int>(m_id);
 
-    // Give some time to the hand to be ready
-    double delay = 1.0;
-    yCInfo(CB) << "Waiting " << delay << " s for the hand to be ready...";
-    yarp::os::Time::delay(delay);
-
-    m_ppids = new yarp::dev::Pid[m_AXES];
-    m_vpids = new yarp::dev::Pid[m_AXES];
-    m_cpids = new yarp::dev::Pid[m_AXES];
-    m_tpids = new yarp::dev::Pid[m_AXES];
-    m_controlModes = new int [m_AXES];
-    for (size_t i=0; i< m_AXES; i++)
-    setControlMode(i,VOCAB_CM_POSITION_DIRECT);
-
-    yarp::dev::Pid positionPidInit(m_PID_kp, m_PID_kd, m_PID_ki, 0.0, 1.0, 1.0);
-    std::vector<yarp::dev::Pid> positionPids(m_AXES, positionPidInit);
-    setPids(VOCAB_PIDTYPE_POSITION, positionPids.data());
-
-
     //start the rateThread
     bool init = this->yarp::os::PeriodicThread::start();
     if(!init)
@@ -112,6 +94,35 @@ bool yarp::dev::xHandControlBoard::open(yarp::os::Searchable& config)
         return false;
     }
 
+    // Give some time to the hand to be ready
+    double delay = 1.0;
+    yCInfo(CB) << "Waiting " << delay << " s for the hand to be ready...";
+    yarp::os::Time::delay(delay);
+
+    m_ppids = new yarp::dev::Pid[EV_HAND_JOINT_NUM];
+    m_vpids = new yarp::dev::Pid[EV_HAND_JOINT_NUM];
+    m_cpids = new yarp::dev::Pid[EV_HAND_JOINT_NUM];
+    m_tpids = new yarp::dev::Pid[EV_HAND_JOINT_NUM];
+    m_controlModes = new int [EV_HAND_JOINT_NUM];
+    for (size_t i=0; i< EV_HAND_JOINT_NUM; i++)setControlMode(i,VOCAB_CM_POSITION);
+
+    yarp::dev::Pid positionPidInit(m_PID_kp, m_PID_kd, m_PID_ki, 0.0, 1.0, 1.0);
+    std::vector<yarp::dev::Pid> positionPids(EV_HAND_JOINT_NUM, positionPidInit);
+    setPids(VOCAB_PIDTYPE_POSITION, positionPids.data());
+
+    // Initialize hand command structure
+    memset(&m_handCommand, 0, sizeof(m_handCommand));
+    for(uint16_t i = 0; i < EV_HAND_JOINT_NUM; i++){
+        m_handCommand.finger_command[i].id = i;
+        double enc = 0.0;
+        getEncoder(i, &enc);
+        m_handCommand.finger_command[i].position = static_cast<float>(deg2rad(enc));
+        m_handCommand.finger_command[i].kp = m_PID_kp;
+        m_handCommand.finger_command[i].ki = m_PID_ki;
+        m_handCommand.finger_command[i].kd = m_PID_kd;
+        m_handCommand.finger_command[i].mode = m_MODE_mode;
+        m_handCommand.finger_command[i].tor_max = m_TORQUE_tor_max;
+    }
 
     return true;
 }
@@ -124,6 +135,13 @@ bool yarp::dev::xHandControlBoard::close()
     }
 
     m_XHCtrl.close_device();
+
+    delete [] m_ppids;
+    delete [] m_vpids;
+    delete [] m_cpids;
+    delete [] m_tpids;
+    delete[] m_controlModes;
+
     return true;
 }
 
@@ -162,16 +180,16 @@ bool yarp::dev::xHandControlBoard::setPids(const yarp::dev::PidControlTypeEnum& 
     switch (pidtype)
     {
         case VOCAB_PIDTYPE_POSITION:
-            for (int j = 0; j < m_AXES; j++){ ret &= setPid(pidtype, j, ps[j]); }
+            for (int j = 0; j < EV_HAND_JOINT_NUM; j++){ ret &= setPid(pidtype, j, ps[j]); }
         break;
         case VOCAB_PIDTYPE_VELOCITY:
-            for (int j = 0; j < m_AXES; j++){ ret &= setPid(pidtype, j, ps[j]); }
+            for (int j = 0; j < EV_HAND_JOINT_NUM; j++){ ret &= setPid(pidtype, j, ps[j]); }
         break;
         case VOCAB_PIDTYPE_CURRENT:
-            for (int j = 0; j < m_AXES; j++){ ret &= setPid(pidtype, j, ps[j]); }
+            for (int j = 0; j < EV_HAND_JOINT_NUM; j++){ ret &= setPid(pidtype, j, ps[j]); }
         break;
         case VOCAB_PIDTYPE_TORQUE:
-            for (int j = 0; j < m_AXES; j++){ ret &= setPid(pidtype, j, ps[j]); }
+            for (int j = 0; j < EV_HAND_JOINT_NUM; j++){ ret &= setPid(pidtype, j, ps[j]); }
         break;
         default:
             ret = false;
@@ -254,16 +272,16 @@ bool yarp::dev::xHandControlBoard::getPids(const yarp::dev::PidControlTypeEnum& 
     switch (pidtype)
     {
         case VOCAB_PIDTYPE_POSITION:
-            for (int j = 0; j < m_AXES; j++){ ret &=getPid(pidtype, j, &pids[j]); }
+            for (int j = 0; j < EV_HAND_JOINT_NUM; j++){ ret &=getPid(pidtype, j, &pids[j]); }
         break;
         case VOCAB_PIDTYPE_VELOCITY:
-            for (int j = 0; j < m_AXES; j++){ ret &=getPid(pidtype, j, &pids[j]); }
+            for (int j = 0; j < EV_HAND_JOINT_NUM; j++){ ret &=getPid(pidtype, j, &pids[j]); }
         break;
         case VOCAB_PIDTYPE_CURRENT:
-            for (int j = 0; j < m_AXES; j++){ ret &=getPid(pidtype, j, &pids[j]); }
+            for (int j = 0; j < EV_HAND_JOINT_NUM; j++){ ret &=getPid(pidtype, j, &pids[j]); }
         break;
         case VOCAB_PIDTYPE_TORQUE:
-            for (int j = 0; j < m_AXES; j++){ ret &=getPid(pidtype, j, &pids[j]); }
+            for (int j = 0; j < EV_HAND_JOINT_NUM; j++){ ret &=getPid(pidtype, j, &pids[j]); }
         break;
         default:
             ret = false;
@@ -314,38 +332,44 @@ bool yarp::dev::xHandControlBoard::isPidEnabled(const yarp::dev::PidControlTypeE
 
 bool yarp::dev::xHandControlBoard::getAxes(int* ax)
 {
-    *ax = m_AXES;
+    *ax = EV_HAND_JOINT_NUM;
     return true;
 }
 
 bool yarp::dev::xHandControlBoard::positionMove(int j, double ref)
 {
-    return false;
+    return setPosition(j, ref);
 }
 
 bool yarp::dev::xHandControlBoard::positionMove(const double* refs)
 {
-    return false;
+    return setPositions(refs);
 }
 
 bool yarp::dev::xHandControlBoard::positionMove(const int n_joints, const int* joints, const double* refs)
 {
-    return false;
+    return setPositions(n_joints, joints, refs);
 }
 
 bool yarp::dev::xHandControlBoard::getTargetPosition(const int joint, double* ref)
 {
-    return false;
+    std::lock_guard lock(m_mutex);
+    *ref = rad2deg(static_cast<double>(m_handState.state.finger_state[joint].position));
+    return true;
 }
 
 bool yarp::dev::xHandControlBoard::getTargetPositions(double* refs)
 {
-    return false;
+    std::lock_guard lock(m_mutex);
+    for(uint16_t i = 0; i < EV_HAND_JOINT_NUM; i++){refs[i] = rad2deg(static_cast<double>(m_handCommand.finger_command[i].position));}
+    return true;
 }
 
 bool yarp::dev::xHandControlBoard::getTargetPositions(const int n_joint, const int* joints, double* refs)
 {
-    return false;
+    std::lock_guard lock(m_mutex);
+    for(uint16_t i = 0; i < n_joint; i++){refs[i] = rad2deg(static_cast<double>(m_handCommand.finger_command[joints[i]].position));}
+    return true;
 }
 
 bool yarp::dev::xHandControlBoard::relativeMove(int j, double delta)
@@ -365,17 +389,20 @@ bool yarp::dev::xHandControlBoard::relativeMove(const int n_joints, const int* j
 
 bool yarp::dev::xHandControlBoard::checkMotionDone(int j, bool* flag)
 {
-    return false;
+    yCDebugOnce(CB) << "checkMotionDone: not implemented yet.";
+    return true;
 }
 
 bool yarp::dev::xHandControlBoard::checkMotionDone(bool* flag)
 {
-    return false;
+    yCDebugOnce(CB) << "checkMotionDone: not implemented yet.";
+    return true;
 }
 
 bool yarp::dev::xHandControlBoard::checkMotionDone(const int n_joints, const int* joints, bool* flags)
 {
-    return false;
+    yCDebugOnce(CB) << "checkMotionDone: not implemented yet.";
+    return true;
 }
 
 bool yarp::dev::xHandControlBoard::setRefSpeed(int j, double sp)
@@ -410,7 +437,9 @@ bool yarp::dev::xHandControlBoard::setRefAccelerations(const int n_joints, const
 
 bool yarp::dev::xHandControlBoard::getRefSpeed(int j, double* ref)
 {
-    return false;
+    yCDebugOnce(CB) << "getRefSpeed: not implemented yet.";
+    *ref=0.0;
+    return true;
 }
 
 bool yarp::dev::xHandControlBoard::getRefSpeeds(double* spds)
@@ -498,15 +527,17 @@ bool yarp::dev::xHandControlBoard::getEncoder(int j, double* v)
 bool yarp::dev::xHandControlBoard::getEncoders(double* encs)
 {
     std::lock_guard lock(m_mutex);
-    for(size_t f=0; f< m_AXES; f++){encs[f] = rad2deg(static_cast<double>(m_handState.state.finger_state[f].position));}
+    for(size_t f=0; f< EV_HAND_JOINT_NUM; f++){encs[f] = rad2deg(static_cast<double>(m_handState.state.finger_state[f].position));}
     return true;
 }
 
 bool yarp::dev::xHandControlBoard::getEncodersTimed(double* encs, double* t)
 {
-    getEncoders(encs);
     std::lock_guard lock(m_mutex);
-    for (size_t i = 0; i < m_AXES; i++){t[i] = m_handState.timestamp;}
+    for(size_t i=0; i< EV_HAND_JOINT_NUM; i++){
+        encs[i] = rad2deg(static_cast<double>(m_handState.state.finger_state[i].position));
+        t[i] = m_handState.timestamp;
+    }
     return true;
 }
 
@@ -846,7 +877,9 @@ bool yarp::dev::xHandControlBoard::getRefTorques(double* refs)
 
 bool yarp::dev::xHandControlBoard::getRefTorque(int j, double* t)
 {
-    return false;
+    yCDebugOnce(CB) << "getRefTorque: not implemented yet.";
+    *t = 0.0;
+    return true;
 }
 
 bool yarp::dev::xHandControlBoard::setRefTorques(const double* t)
@@ -928,20 +961,14 @@ bool yarp::dev::xHandControlBoard::getControlMode(int j, int* mode)
 bool yarp::dev::xHandControlBoard::getControlModes(int* modes)
 {
     bool ret = true;
-    for(int j=0; j< m_AXES; j++)
-    {
-        ret = ret && getControlMode(j, &modes[j]);
-    }
+    for(int j=0; j< EV_HAND_JOINT_NUM; j++){ret = ret && getControlMode(j, &modes[j]);}
     return ret;
 }
 
 bool yarp::dev::xHandControlBoard::getControlModes(const int n_joint, const int* joints, int* modes)
 {
     bool ret = true;
-    for(int j=0; j< n_joint; j++)
-    {
-        ret = ret && getControlMode(joints[j], &modes[j]);
-    }
+    for(int j=0; j< n_joint; j++){ret = ret && getControlMode(joints[j], &modes[j]);}
     return ret;
 }
 
@@ -952,13 +979,13 @@ bool yarp::dev::xHandControlBoard::setControlMode(const int j, const int mode)
     {
         m_controlModes[j] = VOCAB_CM_IDLE;
     }    
-    else if (mode==VOCAB_CM_POSITION_DIRECT)
+    else if (mode==VOCAB_CM_POSITION_DIRECT || mode==VOCAB_CM_POSITION)
     {
         m_controlModes[j] = mode;
     }
     else
     {
-        yCError(CB) << "Control mode" << mode << "not supported. Supported modes are VOCAB_CM_FORCE_IDLE and VOCAB_CM_POSITION_DIRECT.";
+        yCError(CB) << "Control mode" << mode << "not supported. Supported modes are VOCAB_CM_FORCE_IDLE, VOCAB_CM_POSITION_DIRECT and VOCAB_CM_POSITION.";
         return false;
     }
 
@@ -971,54 +998,34 @@ bool yarp::dev::xHandControlBoard::setControlMode(const int j, const int mode)
 bool yarp::dev::xHandControlBoard::setControlModes(const int n_joints, const int* joints, int* modes)
 {
     bool ret = true;
-    for(int i=0; i<n_joints; i++)
-    {
-        ret &= setControlMode(joints[i], modes[i]);
-    }
+    for(int i=0; i<n_joints; i++) {ret &= setControlMode(joints[i], modes[i]);}
     return ret;
 }
 
 bool yarp::dev::xHandControlBoard::setControlModes(int* modes)
 {
     bool ret = true;
-    for (int j = 0; j < m_AXES; j++){ ret &= setControlMode(j, modes[j]); }
+    for (int j = 0; j < EV_HAND_JOINT_NUM; j++){ ret &= setControlMode(j, modes[j]); }
 
     return ret;
 }
 
 bool yarp::dev::xHandControlBoard::setPosition(int j, double ref)
 {
-    return false;
+    m_handCommand.finger_command[j].position = deg2rad(ref);
+    return sendCommandToHand(m_id, m_handCommand);
 }
 
 bool yarp::dev::xHandControlBoard::setPositions(const int n_joints, const int* joints, const double* dpos)
 {
-    return false;
+    for(uint16_t i = 0; i < n_joints; i++){m_handCommand.finger_command[joints[i]].position = deg2rad(dpos[i]);}
+    return sendCommandToHand(m_id, m_handCommand);
 }
 
 bool yarp::dev::xHandControlBoard::setPositions(const double* refs)
 {
-    HandCommand_t command;
-    memset(&command, 0, sizeof(command));
-    for(uint16_t finger_id = 0; finger_id < m_AXES; finger_id++){
-        command.finger_command[finger_id].id = finger_id;
-        command.finger_command[finger_id].position = deg2rad(refs[finger_id]);
-        command.finger_command[finger_id].kp = m_PID_kp;
-        command.finger_command[finger_id].ki = m_PID_ki;
-        command.finger_command[finger_id].kd = m_PID_kd;
-        command.finger_command[finger_id].mode = m_MODE_mode;
-        command.finger_command[finger_id].tor_max = m_TORQUE_tor_max;
-    }
-
-    auto err = m_XHCtrl.send_command(m_id, command);
-
-    if (!err){
-        printErrorStruct(err);
-        yCError(CB) << "See error(s) above.";
-        return false;
-    }
-
-    return true;
+    for(uint16_t i = 0; i < EV_HAND_JOINT_NUM; i++){m_handCommand.finger_command[i].position = deg2rad(refs[i]);}
+    return sendCommandToHand(m_id, m_handCommand);
 }
 
 bool yarp::dev::xHandControlBoard::getRefPosition(const int joint, double* ref)
@@ -1048,7 +1055,9 @@ bool yarp::dev::xHandControlBoard::velocityMove(const int n_joints, const int* j
 
 bool yarp::dev::xHandControlBoard::getRefVelocity(const int joint, double* vel)
 {
-    return false;
+    yCDebugOnce(CB) << "getRefVelocity: not implemented yet.";
+    *vel=0.0;
+    return true;
 }
 
 bool yarp::dev::xHandControlBoard::getRefVelocities(double* vels)
@@ -1187,4 +1196,17 @@ bool yarp::dev::xHandControlBoard::threadInit()
 void yarp::dev::xHandControlBoard::threadRelease()
 {
 
+}
+
+bool yarp::dev::xHandControlBoard::sendCommandToHand(const uint8_t hand_id, const HandCommand_t& command)
+{
+    auto err = m_XHCtrl.send_command(hand_id, command);
+
+    if (!err){
+        printErrorStruct(err);
+        yCError(CB) << "See error(s) above.";
+        return false;
+    }
+
+    return true;
 }
