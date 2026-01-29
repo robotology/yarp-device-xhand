@@ -14,9 +14,9 @@
     </group>
     
     <group name="PID">
-        <param name="kp">       225                 </param>
-        <param name="ki">       0                   </param>
-        <param name="kd">       12000               </param>
+        <param name="kp">   225     </param>
+        <param name="ki">   0       </param>
+        <param name="kd">   12000   </param>
     </group>
 
     <group name="GENERAL">
@@ -24,8 +24,8 @@
     </group>
     	
     <group name="LIMITS">
-        <param name="jntPosMax">105.0 90.0 105.0 10.0 110.0 110.0 110.0 110.0 110.0 110.0 110.0 110.0</param>
-        <param name="jntPosMin">0.0 -60.0 -10.0 -10.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0</param>
+        <param name="jntPosMax">(105.0 90.0 105.0 10.0 110.0 110.0 110.0 110.0 110.0 110.0 110.0 110.0)</param>
+        <param name="jntPosMin">(0.0 -60.0 -10.0 -10.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)</param>
     </group>
             
 </device>
