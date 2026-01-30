@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Thu Jan 29 14:50:43 2026
+// Generated on: Fri Jan 30 10:38:17 2026
 
 
 #include "xHandControlBoard_ParamsParser.h"
@@ -60,6 +60,63 @@ xHandControlBoard_ParamsParser::xHandControlBoard_ParamsParser()
         }
     }
 
+    //Default value of parameterGENERAL_AxisName
+    {
+        m_GENERAL_AxisName.clear();
+        yarp::os::Value tempVal;
+        tempVal.fromString(m_GENERAL_AxisName_defaultValue.c_str());
+        yarp::os::Bottle* tempBot = tempVal.asList();
+        if (tempBot && tempBot->size()!=0)
+        {
+            for (size_t i=0; i<tempBot->size(); i++)
+            {
+                m_GENERAL_AxisName.push_back(tempBot->get(i).asString());
+            }
+        }
+        else
+        {
+             yError() <<"parameter 'GENERAL_AxisName' is not a properly formatted bottle";
+        }
+    }
+
+    //Default value of parameterGENERAL_AxisType
+    {
+        m_GENERAL_AxisType.clear();
+        yarp::os::Value tempVal;
+        tempVal.fromString(m_GENERAL_AxisType_defaultValue.c_str());
+        yarp::os::Bottle* tempBot = tempVal.asList();
+        if (tempBot && tempBot->size()!=0)
+        {
+            for (size_t i=0; i<tempBot->size(); i++)
+            {
+                m_GENERAL_AxisType.push_back(tempBot->get(i).asString());
+            }
+        }
+        else
+        {
+             yError() <<"parameter 'GENERAL_AxisType' is not a properly formatted bottle";
+        }
+    }
+
+    //Default value of parameterGENERAL_AxisMap
+    {
+        m_GENERAL_AxisMap.clear();
+        yarp::os::Value tempVal;
+        tempVal.fromString(m_GENERAL_AxisMap_defaultValue.c_str());
+        yarp::os::Bottle* tempBot = tempVal.asList();
+        if (tempBot && tempBot->size()!=0)
+        {
+            for (size_t i=0; i<tempBot->size(); i++)
+            {
+                m_GENERAL_AxisMap.push_back(tempBot->get(i).asInt64());
+            }
+        }
+        else
+        {
+             yError() <<"parameter 'GENERAL_AxisMap' is not a properly formatted bottle";
+        }
+    }
+
 }
 
 
@@ -77,6 +134,9 @@ std::vector<std::string> xHandControlBoard_ParamsParser::getListOfParams() const
     params.push_back("MODE::mode");
     params.push_back("LIMITS::jntPosMin");
     params.push_back("LIMITS::jntPosMax");
+    params.push_back("GENERAL::AxisName");
+    params.push_back("GENERAL::AxisType");
+    params.push_back("GENERAL::AxisMap");
     return params;
 }
 
@@ -133,6 +193,18 @@ bool xHandControlBoard_ParamsParser::getParamValue(const std::string& paramName,
         return false;
     }
     if (paramName =="LIMITS::jntPosMax")
+    {
+        return false;
+    }
+    if (paramName =="GENERAL::AxisName")
+    {
+        return false;
+    }
+    if (paramName =="GENERAL::AxisType")
+    {
+        return false;
+    }
+    if (paramName =="GENERAL::AxisMap")
     {
         return false;
     }
@@ -369,6 +441,99 @@ bool      xHandControlBoard_ParamsParser::parseParams(const yarp::os::Searchable
         prop_check.unput("LIMITS::jntPosMax");
     }
 
+    //Parser of parameter GENERAL::AxisName
+    {
+        yarp::os::Bottle sectionp;
+        sectionp = config.findGroup("GENERAL");
+        if (sectionp.check("AxisName"))
+        {
+            {
+                m_GENERAL_AxisName.clear();
+                yarp::os::Bottle* tempBot = sectionp.find("AxisName").asList();
+                if (tempBot)
+                {
+                    std::string tempBots = tempBot->toString();
+                    for (size_t i=0; i<tempBot->size(); i++)
+                    {
+                        m_GENERAL_AxisName.push_back(tempBot->get(i).asString());
+                    }
+                }
+                else
+                {
+                     yCError(xHandControlBoardParamsCOMPONENT) <<"parameter 'GENERAL_AxisName' is not a properly formatted bottle";
+                }
+            }
+            yCInfo(xHandControlBoardParamsCOMPONENT) << "Parameter 'GENERAL::AxisName' using value:" << m_GENERAL_AxisName;
+        }
+        else
+        {
+            yCInfo(xHandControlBoardParamsCOMPONENT) << "Parameter 'GENERAL::AxisName' using DEFAULT value:" << m_GENERAL_AxisName;
+        }
+        prop_check.unput("GENERAL::AxisName");
+    }
+
+    //Parser of parameter GENERAL::AxisType
+    {
+        yarp::os::Bottle sectionp;
+        sectionp = config.findGroup("GENERAL");
+        if (sectionp.check("AxisType"))
+        {
+            {
+                m_GENERAL_AxisType.clear();
+                yarp::os::Bottle* tempBot = sectionp.find("AxisType").asList();
+                if (tempBot)
+                {
+                    std::string tempBots = tempBot->toString();
+                    for (size_t i=0; i<tempBot->size(); i++)
+                    {
+                        m_GENERAL_AxisType.push_back(tempBot->get(i).asString());
+                    }
+                }
+                else
+                {
+                     yCError(xHandControlBoardParamsCOMPONENT) <<"parameter 'GENERAL_AxisType' is not a properly formatted bottle";
+                }
+            }
+            yCInfo(xHandControlBoardParamsCOMPONENT) << "Parameter 'GENERAL::AxisType' using value:" << m_GENERAL_AxisType;
+        }
+        else
+        {
+            yCInfo(xHandControlBoardParamsCOMPONENT) << "Parameter 'GENERAL::AxisType' using DEFAULT value:" << m_GENERAL_AxisType;
+        }
+        prop_check.unput("GENERAL::AxisType");
+    }
+
+    //Parser of parameter GENERAL::AxisMap
+    {
+        yarp::os::Bottle sectionp;
+        sectionp = config.findGroup("GENERAL");
+        if (sectionp.check("AxisMap"))
+        {
+            {
+                m_GENERAL_AxisMap.clear();
+                yarp::os::Bottle* tempBot = sectionp.find("AxisMap").asList();
+                if (tempBot)
+                {
+                    std::string tempBots = tempBot->toString();
+                    for (size_t i=0; i<tempBot->size(); i++)
+                    {
+                        m_GENERAL_AxisMap.push_back(tempBot->get(i).asInt64());
+                    }
+                }
+                else
+                {
+                     yCError(xHandControlBoardParamsCOMPONENT) <<"parameter 'GENERAL_AxisMap' is not a properly formatted bottle";
+                }
+            }
+            yCInfo(xHandControlBoardParamsCOMPONENT) << "Parameter 'GENERAL::AxisMap' using value:" << m_GENERAL_AxisMap;
+        }
+        else
+        {
+            yCInfo(xHandControlBoardParamsCOMPONENT) << "Parameter 'GENERAL::AxisMap' using DEFAULT value:" << m_GENERAL_AxisMap;
+        }
+        prop_check.unput("GENERAL::AxisMap");
+    }
+
     /*
     //This code check if the user set some parameter which are not check by the parser
     //If the parser is set in strict mode, this will generate an error
@@ -416,9 +581,12 @@ std::string      xHandControlBoard_ParamsParser::getDocumentationOfDeviceParams(
     doc = doc + std::string("'MODE::mode': Powerless = 0; Powerfull = 3; Check the manual for others\n");
     doc = doc + std::string("'LIMITS::jntPosMin': \n");
     doc = doc + std::string("'LIMITS::jntPosMax': \n");
+    doc = doc + std::string("'GENERAL::AxisName': \n");
+    doc = doc + std::string("'GENERAL::AxisType': \n");
+    doc = doc + std::string("'GENERAL::AxisMap': \n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device xHandControlBoard --connection_type EtherCAT --RS485::port /dev/ttyUSB0 --RS485::baudrate 3000000 --ETHERCAT::eth_ifname <optional_value> --PID::kp 225 --PID::ki 0 --PID::kd 12000 --TORQUE::tor_max 350 --MODE::mode 3 --LIMITS::jntPosMin \" (0.0 -60.0 -10.0 -10.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0) \" --LIMITS::jntPosMax \" (105.0 90.0 105.0 10.0 110.0 110.0 110.0 110.0 110.0 110.0 110.0 110.0) \"\n";
+    doc = doc + " yarpdev --device xHandControlBoard --connection_type EtherCAT --RS485::port /dev/ttyUSB0 --RS485::baudrate 3000000 --ETHERCAT::eth_ifname <optional_value> --PID::kp 225 --PID::ki 0 --PID::kd 12000 --TORQUE::tor_max 350 --MODE::mode 3 --LIMITS::jntPosMin \" (0.0 -60.0 -10.0 -10.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0) \" --LIMITS::jntPosMax \" (105.0 90.0 105.0 10.0 110.0 110.0 110.0 110.0 110.0 110.0 110.0 110.0) \" --GENERAL::AxisName \" (a a a a a a a a a a a a) \" --GENERAL::AxisType \" (a a a a a a a a a a a a) \" --GENERAL::AxisMap \" (0 0 0 0 0 0 0 0 0 0 0 0) \"\n";
     doc = doc + std::string("Using only mandatory params:\n");
     doc = doc + " yarpdev --device xHandControlBoard --connection_type EtherCAT\n";
     doc = doc + std::string("=============================================\n\n");    return doc;

@@ -9,3 +9,6 @@
 * |   MODE     | mode                           | int               | -        |  3                                         | No | Powerless = 0; Powerfull = 3; Check the manual for others |- |
 * |   LIMITS   | jntPosMin                   | vector<double>    | deg      |  (0.0 -60.0 -10.0 -10.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)                  | No |  - |- |
 * |   LIMITS   | jntPosMax                   | vector<double>    | deg      |  (105.0 90.0 105.0 10.0 110.0 110.0 110.0 110.0 110.0 110.0 110.0 110.0)  | No |  - |- |
+* |   GENERAL   | AxisName                   | vector<string>    | -      |  (a a a a a a a a a a a a)  | No |  - |- |
+* |   GENERAL   | AxisType                   | vector<string>    | -      |  (a a a a a a a a a a a a)  | No |  - |- |
+* |   GENERAL   | AxisMap                    | vector<int>       | -      |  (0 0 0 0 0 0 0 0 0 0 0 0)  | No |  - |- |

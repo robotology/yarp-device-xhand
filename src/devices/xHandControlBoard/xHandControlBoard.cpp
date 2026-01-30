@@ -27,6 +27,41 @@ bool yarp::dev::xHandControlBoard::open(yarp::os::Searchable& config)
         return false;
     }
 
+    // Params check
+    if(m_GENERAL_AxisName.size() != EV_HAND_JOINT_NUM)
+    {
+        yCError(CB) << "Number of Axis names provided (" << m_GENERAL_AxisName.size() << ") does not match the number of joints supported by the hand (" << EV_HAND_JOINT_NUM << ").";
+        return false;
+    }
+    if(m_GENERAL_AxisMap.size() != EV_HAND_JOINT_NUM)
+    {
+        yCError(CB) << "Number of Axis map entries provided (" << m_GENERAL_AxisMap.size() << ") does not match the number of joints supported by the hand (" << EV_HAND_JOINT_NUM << ").";
+        return false;
+    }
+    if(m_GENERAL_AxisType.size() != EV_HAND_JOINT_NUM)
+    {
+        yCError(CB) << "Number of Axis types provided (" << m_GENERAL_AxisType.size() << ") does not match the number of joints supported by the hand (" << EV_HAND_JOINT_NUM << ").";
+        return false;
+    }
+    if(m_LIMITS_jntPosMax.size() != EV_HAND_JOINT_NUM)
+    {
+        yCError(CB) << "Number of joint position max limits provided (" << m_LIMITS_jntPosMax.size() << ") does not match the number of joints supported by the hand (" << EV_HAND_JOINT_NUM << ").";
+        return false;
+    }
+    if(m_LIMITS_jntPosMin.size() != EV_HAND_JOINT_NUM)
+    {
+        yCError(CB) << "Number of joint position min limits provided (" << m_LIMITS_jntPosMin.size() << ") does not match the number of joints supported by the hand (" << EV_HAND_JOINT_NUM << ").";
+        return false;
+    }
+    for(size_t i=0; i<EV_HAND_JOINT_NUM; i++)
+    {
+        if(m_LIMITS_jntPosMin[i] >= m_LIMITS_jntPosMax[i])
+        {
+            yCError(CB) << "Joint position limits for joint " << i << " are invalid: min limit (" << m_LIMITS_jntPosMin[i] << ") >= max limit (" << m_LIMITS_jntPosMax[i] << ").";
+            return false;
+        }
+    }
+
     // Looking for available devices
     std::vector<std::string> ifnames = m_XHCtrl.enumerate_devices(m_connection_type);
     if (ifnames.empty()) {
@@ -862,12 +897,23 @@ bool yarp::dev::xHandControlBoard::setGearboxRatio(int m, const double val)
 
 bool yarp::dev::xHandControlBoard::getAxisName(int j, std::string& name)
 {
-    return false;
+    name = m_GENERAL_AxisName[j];
+    return true;
 }
 
 bool yarp::dev::xHandControlBoard::getJointType(int j, yarp::dev::JointTypeEnum& type)
 {
-    return false;
+    if(m_GENERAL_AxisType[j] == "revolute"){
+        type = yarp::dev::JointTypeEnum::VOCAB_JOINTTYPE_REVOLUTE;
+        return true;
+    }
+    else if(m_GENERAL_AxisType[j] == "prismatic"){
+        type = yarp::dev::JointTypeEnum::VOCAB_JOINTTYPE_PRISMATIC;
+        return true;
+    }
+    else{
+        return false;
+    }
 }
 
 bool yarp::dev::xHandControlBoard::getRefTorques(double* refs)

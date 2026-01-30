@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Thu Jan 29 14:50:43 2026
+// Generated on: Fri Jan 30 10:38:17 2026
 
 
 #ifndef XHANDCONTROLBOARD_PARAMSPARSER_H
@@ -36,10 +36,13 @@
 * | MODE       | mode            | int            | -     | 3                                                                       | 0        | Powerless = 0; Powerfull = 3; Check the manual for others | -                                                        |
 * | LIMITS     | jntPosMin       | vector<double> | deg   | (0.0 -60.0 -10.0 -10.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)                 | 0        | -                                                         | -                                                        |
 * | LIMITS     | jntPosMax       | vector<double> | deg   | (105.0 90.0 105.0 10.0 110.0 110.0 110.0 110.0 110.0 110.0 110.0 110.0) | 0        | -                                                         | -                                                        |
+* | GENERAL    | AxisName        | vector<string> | -     | (a a a a a a a a a a a a)                                               | 0        | -                                                         | -                                                        |
+* | GENERAL    | AxisType        | vector<string> | -     | (a a a a a a a a a a a a)                                               | 0        | -                                                         | -                                                        |
+* | GENERAL    | AxisMap         | vector<int>    | -     | (0 0 0 0 0 0 0 0 0 0 0 0)                                               | 0        | -                                                         | -                                                        |
 *
 * The device can be launched by yarpdev using one of the following examples (with and without all optional parameters):
 * \code{.unparsed}
-* yarpdev --device xHandControlBoard --connection_type EtherCAT --RS485::port /dev/ttyUSB0 --RS485::baudrate 3000000 --ETHERCAT::eth_ifname <optional_value> --PID::kp 225 --PID::ki 0 --PID::kd 12000 --TORQUE::tor_max 350 --MODE::mode 3 --LIMITS::jntPosMin \" (0.0 -60.0 -10.0 -10.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0) \" --LIMITS::jntPosMax \" (105.0 90.0 105.0 10.0 110.0 110.0 110.0 110.0 110.0 110.0 110.0 110.0) \"
+* yarpdev --device xHandControlBoard --connection_type EtherCAT --RS485::port /dev/ttyUSB0 --RS485::baudrate 3000000 --ETHERCAT::eth_ifname <optional_value> --PID::kp 225 --PID::ki 0 --PID::kd 12000 --TORQUE::tor_max 350 --MODE::mode 3 --LIMITS::jntPosMin \" (0.0 -60.0 -10.0 -10.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0) \" --LIMITS::jntPosMax \" (105.0 90.0 105.0 10.0 110.0 110.0 110.0 110.0 110.0 110.0 110.0 110.0) \" --GENERAL::AxisName \" (a a a a a a a a a a a a) \" --GENERAL::AxisType \" (a a a a a a a a a a a a) \" --GENERAL::AxisMap \" (0 0 0 0 0 0 0 0 0 0 0 0) \"
 * \endcode
 *
 * \code{.unparsed}
@@ -78,6 +81,9 @@ public:
     const std::string m_MODE_mode_defaultValue = {"3"};
     const std::string m_LIMITS_jntPosMin_defaultValue = {"(0.0 -60.0 -10.0 -10.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)"};
     const std::string m_LIMITS_jntPosMax_defaultValue = {"(105.0 90.0 105.0 10.0 110.0 110.0 110.0 110.0 110.0 110.0 110.0 110.0)"};
+    const std::string m_GENERAL_AxisName_defaultValue = {"(a a a a a a a a a a a a)"};
+    const std::string m_GENERAL_AxisType_defaultValue = {"(a a a a a a a a a a a a)"};
+    const std::string m_GENERAL_AxisMap_defaultValue = {"(0 0 0 0 0 0 0 0 0 0 0 0)"};
 
     std::string m_connection_type = {"EtherCAT"};
     std::string m_RS485_port = {"/dev/ttyUSB0"};
@@ -90,6 +96,9 @@ public:
     int m_MODE_mode = {3};
     std::vector<double> m_LIMITS_jntPosMin = { }; //Default values for lists are managed in the class constructor. It is highly recommended to provide a suggested value also for optional string parameters.
     std::vector<double> m_LIMITS_jntPosMax = { }; //Default values for lists are managed in the class constructor. It is highly recommended to provide a suggested value also for optional string parameters.
+    std::vector<std::string> m_GENERAL_AxisName = { }; //Default values for lists are managed in the class constructor. It is highly recommended to provide a suggested value also for optional string parameters.
+    std::vector<std::string> m_GENERAL_AxisType = { }; //Default values for lists are managed in the class constructor. It is highly recommended to provide a suggested value also for optional string parameters.
+    std::vector<int> m_GENERAL_AxisMap = { }; //Default values for lists are managed in the class constructor. It is highly recommended to provide a suggested value also for optional string parameters.
 
     bool          parseParams(const yarp::os::Searchable & config) override;
     std::string   getDeviceClassName() const override { return m_device_classname; }
