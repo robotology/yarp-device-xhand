@@ -1,0 +1,6 @@
+add_subdirectory(xhand-read-control-test)
+add_subdirectory(xhand-control-test)
+add_subdirectory(xhand-read-test)
+add_subdirectory(xhand-multithread-test)
+add_subdirectory(xhand-multithread-read-test)
+add_subdirectory(xhand-multithread-control-test)

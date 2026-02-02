@@ -1,6 +1,14 @@
-| Group |  Parameter                    | Type   | Units    | Default Value                | Required  | Description                                            | Notes                                      |
-|:-----:|:-----------------------------:|:------:|:--------:|:----------------------------:|:---------:|:------------------------------------------------------:|:------------------------------------------:|
-|       | connection_type               | string | -        |   -                          | Yes       | Specify the connection type                            | Can be either "serial" or "ethercat"       |
-|       | serial_port                   | string | -        |   -                          | Yes       | Specify the port to use for the serial connection      | Necessary only if using "serial"           |
-|       | baudrate                      | int    | -        |   -                          | Yes       | Specify the baudrate for the serial connection         | Necessary only if using "serial"           |
-|       | eth_ifname                    | string | -        |   -                          | Yes       | Specify the interface name for the ethercat connection | Necessary only if using "ethercat"         |
+* |            | connection_type                | string | -        |   EtherCAT            | Yes      | Specify the connection type                            | Can be either "RS485" (USB) or "EtherCAT" (ethernet)       |
+* |  RS485     | port                           | string | -        |   /dev/ttyUSB0        | No       | Specify the port to use for the serial connection      | Necessary only if using "RS485"                   |
+* |  RS485     | baudrate                       | int    | -        |   3000000             | No       | Specify the baudrate for the serial connection         | Necessary only if using "RS485"                   |
+* | ETHERCAT   |  eth_ifname                    | string | -        |   -                   | No       | Specify the interface name for the ethercat connection | Necessary only if using "EtherCAT"                |
+* |   PID      |    kp                          | int               | -        |   225                                      | No | Finger motors P gain | - |
+* |   PID      |    ki                          | int               | -        |    0                                       | No | Finger motors I gain | - |
+* |   PID      |    kd                          | int               | -        |  12000                                     | No | Finger motors D gain | - |
+* |   TORQUE   | tor_max                        | int               | -        |  350                                       | No | Note: 350 is the value from their ethercat_test | - |
+* |   MODE     | mode                           | int               | -        |  3                                         | No | Powerless = 0; Powerfull = 3; Check the manual for others |- |
+* |   LIMITS   | jntPosMin                   | vector<double>    | deg      |  (0.0 -60.0 -10.0 -10.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)                  | No |  - |- |
+* |   LIMITS   | jntPosMax                   | vector<double>    | deg      |  (105.0 90.0 105.0 10.0 110.0 110.0 110.0 110.0 110.0 110.0 110.0 110.0)  | No |  - |- |
+* |   GENERAL   | AxisName                   | vector<string>    | -      |  (a a a a a a a a a a a a)  | No |  - |- |
+* |   GENERAL   | AxisType                   | vector<string>    | -      |  (a a a a a a a a a a a a)  | No |  - |- |
+* |   GENERAL   | AxisMap                    | vector<int>       | -      |  (0 0 0 0 0 0 0 0 0 0 0 0)  | No |  - |- |

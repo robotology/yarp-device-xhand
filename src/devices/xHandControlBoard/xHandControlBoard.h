@@ -7,6 +7,7 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/IPreciselyTimed.h>
+#include <yarp/os/PeriodicThread.h>
 
 #include <xhand_control.hpp>
 
@@ -26,6 +27,7 @@ namespace yarp::dev
 
 
 class yarp::dev::xHandControlBoard :
+    public xHandControlBoard_ParamsParser,
     public yarp::dev::DeviceDriver,
     public yarp::dev::IPidControl,
     public yarp::dev::IPositionControl,
@@ -47,11 +49,12 @@ class yarp::dev::xHandControlBoard :
     public yarp::dev::IPreciselyTimed,
     public yarp::dev::IInteractionMode,
     public yarp::dev::IRemoteVariables,
-    public yarp::dev::IJointFault
+    public yarp::dev::IJointFault,
+    public yarp::os::PeriodicThread
 {
 
 public:
-    xHandControlBoard() = default;
+    xHandControlBoard();
     ~xHandControlBoard() override;
 
     /* DeviceDriver methods */
@@ -435,8 +438,26 @@ public:
 
     bool getRefCurrent(int m, double* curr) override;
 
+    //PeriodicThread
+    void run() override;
+    bool threadInit() override;
+    void threadRelease() override;
+
 private:
 
+    xhand_control::XHandControl m_XHCtrl{};
+    uint8_t m_id{0};
+    yarp::dev::Pid* m_ppids{}, *m_vpids{}, *m_cpids{}, *m_tpids{};
+    int* m_controlModes{};
+    struct HANDSTATE{
+        double timestamp{0.0};
+        HandState_t state;
+    }m_handState;
+    std::mutex m_mutex;
+    HandCommand_t m_handCommand;
+
+    void printErrorStruct(const xhand_control::ErrorStruct& err);
+    bool sendCommandToHand(const uint8_t hand_id, const HandCommand_t& command);
 
 };
 #endif
