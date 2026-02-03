@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Tue Feb  3 15:11:16 2026
+// Generated on: Tue Feb  3 14:10:39 2026
 
 
 #include "xHandControlBoard_ParamsParser.h"
@@ -57,6 +57,44 @@ xHandControlBoard_ParamsParser::xHandControlBoard_ParamsParser()
         else
         {
              yError() <<"parameter 'LIMITS_jntPosMax' is not a properly formatted bottle";
+        }
+    }
+
+    //Default value of parameterLIMITS_jntVelMin
+    {
+        m_LIMITS_jntVelMin.clear();
+        yarp::os::Value tempVal;
+        tempVal.fromString(m_LIMITS_jntVelMin_defaultValue.c_str());
+        yarp::os::Bottle* tempBot = tempVal.asList();
+        if (tempBot && tempBot->size()!=0)
+        {
+            for (size_t i=0; i<tempBot->size(); i++)
+            {
+                m_LIMITS_jntVelMin.push_back(tempBot->get(i).asFloat64());
+            }
+        }
+        else
+        {
+             yError() <<"parameter 'LIMITS_jntVelMin' is not a properly formatted bottle";
+        }
+    }
+
+    //Default value of parameterLIMITS_jntVelMax
+    {
+        m_LIMITS_jntVelMax.clear();
+        yarp::os::Value tempVal;
+        tempVal.fromString(m_LIMITS_jntVelMax_defaultValue.c_str());
+        yarp::os::Bottle* tempBot = tempVal.asList();
+        if (tempBot && tempBot->size()!=0)
+        {
+            for (size_t i=0; i<tempBot->size(); i++)
+            {
+                m_LIMITS_jntVelMax.push_back(tempBot->get(i).asFloat64());
+            }
+        }
+        else
+        {
+             yError() <<"parameter 'LIMITS_jntVelMax' is not a properly formatted bottle";
         }
     }
 
@@ -134,6 +172,8 @@ std::vector<std::string> xHandControlBoard_ParamsParser::getListOfParams() const
     params.push_back("MODE::mode");
     params.push_back("LIMITS::jntPosMin");
     params.push_back("LIMITS::jntPosMax");
+    params.push_back("LIMITS::jntVelMin");
+    params.push_back("LIMITS::jntVelMax");
     params.push_back("GENERAL::AxisName");
     params.push_back("GENERAL::AxisType");
     params.push_back("GENERAL::AxisMap");
@@ -193,6 +233,14 @@ bool xHandControlBoard_ParamsParser::getParamValue(const std::string& paramName,
         return false;
     }
     if (paramName =="LIMITS::jntPosMax")
+    {
+        return false;
+    }
+    if (paramName =="LIMITS::jntVelMin")
+    {
+        return false;
+    }
+    if (paramName =="LIMITS::jntVelMax")
     {
         return false;
     }
@@ -441,6 +489,68 @@ bool      xHandControlBoard_ParamsParser::parseParams(const yarp::os::Searchable
         prop_check.unput("LIMITS::jntPosMax");
     }
 
+    //Parser of parameter LIMITS::jntVelMin
+    {
+        yarp::os::Bottle sectionp;
+        sectionp = config.findGroup("LIMITS");
+        if (sectionp.check("jntVelMin"))
+        {
+            {
+                m_LIMITS_jntVelMin.clear();
+                yarp::os::Bottle* tempBot = sectionp.find("jntVelMin").asList();
+                if (tempBot)
+                {
+                    std::string tempBots = tempBot->toString();
+                    for (size_t i=0; i<tempBot->size(); i++)
+                    {
+                        m_LIMITS_jntVelMin.push_back(tempBot->get(i).asFloat64());
+                    }
+                }
+                else
+                {
+                     yCError(xHandControlBoardParamsCOMPONENT) <<"parameter 'LIMITS_jntVelMin' is not a properly formatted bottle";
+                }
+            }
+            yCInfo(xHandControlBoardParamsCOMPONENT) << "Parameter 'LIMITS::jntVelMin' using value:" << m_LIMITS_jntVelMin;
+        }
+        else
+        {
+            yCInfo(xHandControlBoardParamsCOMPONENT) << "Parameter 'LIMITS::jntVelMin' using DEFAULT value:" << m_LIMITS_jntVelMin;
+        }
+        prop_check.unput("LIMITS::jntVelMin");
+    }
+
+    //Parser of parameter LIMITS::jntVelMax
+    {
+        yarp::os::Bottle sectionp;
+        sectionp = config.findGroup("LIMITS");
+        if (sectionp.check("jntVelMax"))
+        {
+            {
+                m_LIMITS_jntVelMax.clear();
+                yarp::os::Bottle* tempBot = sectionp.find("jntVelMax").asList();
+                if (tempBot)
+                {
+                    std::string tempBots = tempBot->toString();
+                    for (size_t i=0; i<tempBot->size(); i++)
+                    {
+                        m_LIMITS_jntVelMax.push_back(tempBot->get(i).asFloat64());
+                    }
+                }
+                else
+                {
+                     yCError(xHandControlBoardParamsCOMPONENT) <<"parameter 'LIMITS_jntVelMax' is not a properly formatted bottle";
+                }
+            }
+            yCInfo(xHandControlBoardParamsCOMPONENT) << "Parameter 'LIMITS::jntVelMax' using value:" << m_LIMITS_jntVelMax;
+        }
+        else
+        {
+            yCInfo(xHandControlBoardParamsCOMPONENT) << "Parameter 'LIMITS::jntVelMax' using DEFAULT value:" << m_LIMITS_jntVelMax;
+        }
+        prop_check.unput("LIMITS::jntVelMax");
+    }
+
     //Parser of parameter GENERAL::AxisName
     {
         yarp::os::Bottle sectionp;
@@ -581,12 +691,14 @@ std::string      xHandControlBoard_ParamsParser::getDocumentationOfDeviceParams(
     doc = doc + std::string("'MODE::mode': Powerless = 0; Powerfull = 3; Check the manual for others\n");
     doc = doc + std::string("'LIMITS::jntPosMin': \n");
     doc = doc + std::string("'LIMITS::jntPosMax': \n");
+    doc = doc + std::string("'LIMITS::jntVelMin': \n");
+    doc = doc + std::string("'LIMITS::jntVelMax': \n");
     doc = doc + std::string("'GENERAL::AxisName': \n");
     doc = doc + std::string("'GENERAL::AxisType': \n");
     doc = doc + std::string("'GENERAL::AxisMap': \n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device xHandControlBoard --connection_type EtherCAT --RS485::port /dev/ttyUSB0 --RS485::baudrate 3000000 --ETHERCAT::eth_ifname <optional_value> --PID::kp 225 --PID::ki 0 --PID::kd 12000 --TORQUE::tor_max 350 --MODE::mode 3 --LIMITS::jntPosMin \" (0.0 -60.0 -10.0 -10.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0) \" --LIMITS::jntPosMax \" (105.0 90.0 105.0 10.0 110.0 110.0 110.0 110.0 110.0 110.0 110.0 110.0) \" --GENERAL::AxisName \" (a a a a a a a a a a a a) \" --GENERAL::AxisType \" (a a a a a a a a a a a a) \" --GENERAL::AxisMap \" (0 0 0 0 0 0 0 0 0 0 0 0) \"\n";
+    doc = doc + " yarpdev --device xHandControlBoard --connection_type EtherCAT --RS485::port /dev/ttyUSB0 --RS485::baudrate 3000000 --ETHERCAT::eth_ifname <optional_value> --PID::kp 225 --PID::ki 0 --PID::kd 12000 --TORQUE::tor_max 350 --MODE::mode 3 --LIMITS::jntPosMin \" (0.0 -60.0 -10.0 -10.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0) \" --LIMITS::jntPosMax \" (105.0 90.0 105.0 10.0 110.0 110.0 110.0 110.0 110.0 110.0 110.0 110.0) \" --LIMITS::jntVelMin \" (0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0) \" --LIMITS::jntVelMax \" (100.0 100.0 100.0 100.0 100.0 100.0 100.0 100.0 100.0 100.0 100.0 100.0) \" --GENERAL::AxisName \" (a a a a a a a a a a a a) \" --GENERAL::AxisType \" (a a a a a a a a a a a a) \" --GENERAL::AxisMap \" (0 0 0 0 0 0 0 0 0 0 0 0) \"\n";
     doc = doc + std::string("Using only mandatory params:\n");
     doc = doc + " yarpdev --device xHandControlBoard --connection_type EtherCAT\n";
     doc = doc + std::string("=============================================\n\n");    return doc;

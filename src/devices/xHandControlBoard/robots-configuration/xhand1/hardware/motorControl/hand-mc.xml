@@ -22,6 +22,7 @@
     <group name="LIMITS">
         <param name="jntPosMax">(105.0 90.0 105.0 10.0 110.0 110.0 110.0 110.0 110.0 110.0 110.0 110.0)</param>
         <param name="jntPosMin">(0.0 -60.0 -10.0 -10.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0)</param>
+        <param name="jntVelMax">(100.0 100.0 100.0 100.0 100.0 100.0 100.0 100.0 100.0 100.0 100.0 100.0)</param>
     </group>
             
 </device>

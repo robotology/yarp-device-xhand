@@ -53,11 +53,27 @@ bool yarp::dev::xHandControlBoard::open(yarp::os::Searchable& config)
         yCError(CB) << "Number of joint position min limits provided (" << m_LIMITS_jntPosMin.size() << ") does not match the number of joints supported by the hand (" << EV_HAND_JOINT_NUM << ").";
         return false;
     }
+    if(m_LIMITS_jntVelMin.size() != EV_HAND_JOINT_NUM)
+    {
+        yCError(CB) << "Number of joint velocity min limits provided (" << m_LIMITS_jntVelMin.size() << ") does not match the number of joints supported by the hand (" << EV_HAND_JOINT_NUM << ").";
+        return false;
+    }
+    if(m_LIMITS_jntVelMax.size() != EV_HAND_JOINT_NUM)
+    {
+        yCError(CB) << "Number of joint velocity max limits provided (" << m_LIMITS_jntVelMax.size() << ") does not match the number of joints supported by the hand (" << EV_HAND_JOINT_NUM << ").";
+        return false;
+    }
     for(size_t i=0; i<EV_HAND_JOINT_NUM; i++)
     {
         if(m_LIMITS_jntPosMin[i] >= m_LIMITS_jntPosMax[i])
         {
             yCError(CB) << "Joint position limits for joint " << i << " are invalid: min limit (" << m_LIMITS_jntPosMin[i] << ") >= max limit (" << m_LIMITS_jntPosMax[i] << ").";
+            return false;
+        }
+    }
+    for(size_t i=0; i<EV_HAND_JOINT_NUM; i++){
+        if(m_LIMITS_jntVelMin[i] >= m_LIMITS_jntVelMax[i]){
+            yCError(CB) << "Joint velocity limits for joint " << i << " are invalid: min limit (" << m_LIMITS_jntVelMin[i] << ") >= max limit (" << m_LIMITS_jntVelMax[i] << ").";
             return false;
         }
     }
@@ -762,12 +778,16 @@ bool yarp::dev::xHandControlBoard::getLimits(int j, double* min, double* max)
 
 bool yarp::dev::xHandControlBoard::setVelLimits(int j, double min, double max)
 {
-    return false;
+    m_LIMITS_jntVelMin[j] = min;
+    m_LIMITS_jntVelMax[j] = max;
+    return true;
 }
 
 bool yarp::dev::xHandControlBoard::getVelLimits(int j, double* min, double* max)
 {
-    return false;
+    *min = m_LIMITS_jntVelMin[j];
+    *max = m_LIMITS_jntVelMax[j];
+    return true;
 }
 
 bool yarp::dev::xHandControlBoard::getRemoteVariable(std::string key, yarp::os::Bottle& val)
