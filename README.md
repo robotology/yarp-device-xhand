@@ -10,10 +10,15 @@ export xhand_control_DIR=XHAND_SDK_PATH/xhand_control_sdk/share/xhand_control/cm
 export LD_LIBRARY_PATH=$XHAND_SDK_PATH/xhand_control_sdk/lib:$LD_LIBRARY_PATH
 ```
 
-# yarp-device environments configurations
+# yarp-device: build/install and environments configurations
 
 ```
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH>:"/<path to yarp-device-xhand install dir>/lib"
+cd /<path to yarp-device-xhand repository>
+mkdir build & cd build
+cmake .. -DCMAKE_INSTALL_PREFIX=/<path to yarp-device-xhand install dir>
+export PATH=$PATH::/<path to yarp-device-xhand install dir>/bin
+export YARP_DATA_DIRS=$YARP_DATA_DIRS::/<path to yarp-device-xhand install dir>/share/yarp
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH>:/<path to yarp-device-xhand install dir>/lib
 ```
 
 # ethercat configurations
