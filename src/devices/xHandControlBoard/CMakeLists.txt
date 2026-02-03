@@ -27,6 +27,8 @@ add_library(${plugin_name}_lib
     xHandControlBoard.h
     xHandControlBoard_ParamsParser.h
     xHandControlBoard_ParamsParser.cpp
+    ControlBoardTrajectory.h
+    ControlBoardTrajectory.cpp
 )
 
 target_link_libraries(${plugin_name}_lib
