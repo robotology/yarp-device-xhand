@@ -175,6 +175,8 @@ bool yarp::dev::xHandControlBoard::open(yarp::os::Searchable& config)
         m_handCommand.finger_command[i].tor_max = m_TORQUE_tor_max;
     }
 
+    sendCommandToHand(m_id, m_handCommand);
+
     return true;
 }
 
@@ -208,6 +210,10 @@ bool yarp::dev::xHandControlBoard::setPid(const yarp::dev::PidControlTypeEnum& p
     {
         case VOCAB_PIDTYPE_POSITION:
             m_ppids[j] = p;
+            m_handCommand.finger_command[j].kp = p.kp;
+            m_handCommand.finger_command[j].ki = p.ki;
+            m_handCommand.finger_command[j].kd = p.kd;
+            sendCommandToHand(m_id, m_handCommand);
         break;
         case VOCAB_PIDTYPE_VELOCITY:
             m_vpids[j] = p;
@@ -1041,13 +1047,16 @@ bool yarp::dev::xHandControlBoard::getControlModes(const int n_joint, const int*
 bool yarp::dev::xHandControlBoard::setControlMode(const int j, const int mode)
 {
     
-    if (mode==VOCAB_CM_FORCE_IDLE)
+    if (mode==VOCAB_CM_FORCE_IDLE || mode==VOCAB_CM_IDLE)
     {
         m_controlModes[j] = VOCAB_CM_IDLE;
+        m_MODE_mode = 0;
     }    
     else if (mode==VOCAB_CM_POSITION_DIRECT || mode==VOCAB_CM_POSITION)
     {
         m_controlModes[j] = mode;
+        m_MODE_mode = 3;
+        m_handCommand.finger_command[j].position = m_handState.state.finger_state[j].position;
     }
     else
     {
@@ -1055,7 +1064,8 @@ bool yarp::dev::xHandControlBoard::setControlMode(const int j, const int mode)
         return false;
     }
 
-    // _posCtrl_references[j] = pos[j];
+    m_handCommand.finger_command[j].mode = m_MODE_mode;
+    sendCommandToHand(m_id, m_handCommand);
 
     return true;
 
