@@ -1,5 +1,6 @@
 #include <ControlBoardTrajectory.h>
 #include <yarp/os/Time.h>
+#include <cmath>
 
 void Watchdog::reset()
 {
