@@ -155,11 +155,6 @@ bool yarp::dev::xHandControlBoard::open(yarp::os::Searchable& config)
     m_cpids = new yarp::dev::Pid[EV_HAND_JOINT_NUM];
     m_tpids = new yarp::dev::Pid[EV_HAND_JOINT_NUM];
     m_controlModes = new int [EV_HAND_JOINT_NUM];
-    for (size_t i=0; i< EV_HAND_JOINT_NUM; i++)setControlMode(i,VOCAB_CM_POSITION);
-
-    yarp::dev::Pid positionPidInit(m_PID_kp, m_PID_kd, m_PID_ki, 0.0, 1.0, 1.0);
-    std::vector<yarp::dev::Pid> positionPids(EV_HAND_JOINT_NUM, positionPidInit);
-    setPids(VOCAB_PIDTYPE_POSITION, positionPids.data());
 
     // Initialize hand command structure
     memset(&m_handCommand, 0, sizeof(m_handCommand));
@@ -176,6 +171,11 @@ bool yarp::dev::xHandControlBoard::open(yarp::os::Searchable& config)
     }
 
     sendCommandToHand(m_id, m_handCommand);
+
+    for (size_t i=0; i< EV_HAND_JOINT_NUM; i++)setControlMode(i,VOCAB_CM_POSITION);
+    yarp::dev::Pid positionPidInit(m_PID_kp, m_PID_kd, m_PID_ki, 0.0, 1.0, 1.0);
+    std::vector<yarp::dev::Pid> positionPids(EV_HAND_JOINT_NUM, positionPidInit);
+    setPids(VOCAB_PIDTYPE_POSITION, positionPids.data());
 
     return true;
 }
@@ -199,7 +199,9 @@ bool yarp::dev::xHandControlBoard::close()
 }
 
 void yarp::dev::xHandControlBoard::printErrorStruct(const xhand_control::ErrorStruct& err){
-    yCError(CB)    << " Read state failed" << err.error_code << "  " << err.error_message
+    yCError(CB) << " Read state failed:"
+                << "\n error_code:" << err.error_code
+                << "\n error_message:" << err.error_message
                 << "\n error_type: " << err.error_details.error_type
                 << "\n error_name: " << err.error_details.error_name;
 }
@@ -1046,25 +1048,19 @@ bool yarp::dev::xHandControlBoard::getControlModes(const int n_joint, const int*
 
 bool yarp::dev::xHandControlBoard::setControlMode(const int j, const int mode)
 {
-    
-    if (mode==VOCAB_CM_FORCE_IDLE || mode==VOCAB_CM_IDLE)
+    if (yarpToXhandControlModes.find(mode) == yarpToXhandControlModes.end())
     {
-        m_controlModes[j] = VOCAB_CM_IDLE;
-        m_MODE_mode = 0;
-    }    
-    else if (mode==VOCAB_CM_POSITION_DIRECT || mode==VOCAB_CM_POSITION)
-    {
-        m_controlModes[j] = mode;
-        m_MODE_mode = 3;
-        m_handCommand.finger_command[j].position = m_handState.state.finger_state[j].position;
-    }
-    else
-    {
-        yCError(CB) << "Control mode" << mode << "not supported. Supported modes are VOCAB_CM_FORCE_IDLE, VOCAB_CM_POSITION_DIRECT and VOCAB_CM_POSITION.";
+        yCError(CB) << "Control mode" << mode << "not supported. Supported modes are: VOCAB_CM_IDLE, VOCAB_CM_POSITION and VOCAB_CM_POSITION_DIRECT.";
         return false;
     }
 
-    m_handCommand.finger_command[j].mode = m_MODE_mode;
+    if (mode==VOCAB_CM_POSITION_DIRECT || mode==VOCAB_CM_POSITION)
+    {
+        m_handCommand.finger_command[j].position = m_handState.state.finger_state[j].position;
+    }
+ 
+    m_controlModes[j] = mode;
+    m_handCommand.finger_command[j].mode = m_MODE_mode = yarpToXhandControlModes[mode];
     sendCommandToHand(m_id, m_handCommand);
 
     return true;
@@ -1257,7 +1253,7 @@ void yarp::dev::xHandControlBoard::run()
 
     if (!ret.first) {
         printErrorStruct(ret.first);
-        yCError(CB) << "See error(s) above.";
+        yCError(CB) << "[run] See error(s) above.";
     }
 
     std::lock_guard lock(m_mutex);
@@ -1280,7 +1276,7 @@ bool yarp::dev::xHandControlBoard::sendCommandToHand(const uint8_t hand_id, cons
 
     if (!err){
         printErrorStruct(err);
-        yCError(CB) << "See error(s) above.";
+        yCError(CB) << "[sendCommandToHand] See error(s) above.";
         return false;
     }
 

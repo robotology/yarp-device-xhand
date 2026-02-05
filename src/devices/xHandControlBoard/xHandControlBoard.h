@@ -17,6 +17,7 @@
 #include <string>
 #include <thread>
 #include <vector>
+#include <unordered_map>
 
 #include "xHandControlBoard_ParamsParser.h"
 
@@ -455,6 +456,13 @@ private:
     }m_handState;
     std::mutex m_mutex;
     HandCommand_t m_handCommand;
+
+    std::unordered_map<int, int> yarpToXhandControlModes = {
+        {VOCAB_CM_IDLE, 0},
+        {VOCAB_CM_FORCE_IDLE, 0},
+        {VOCAB_CM_POSITION, 3},
+        {VOCAB_CM_POSITION_DIRECT, 3}
+    };
 
     void printErrorStruct(const xhand_control::ErrorStruct& err);
     bool sendCommandToHand(const uint8_t hand_id, const HandCommand_t& command);
