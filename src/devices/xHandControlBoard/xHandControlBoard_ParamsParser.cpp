@@ -8,7 +8,7 @@
 // This is an automatically generated file. Please do not edit it.
 // It will be re-generated if the cmake flag ALLOW_DEVICE_PARAM_PARSER_GERNERATION is ON.
 
-// Generated on: Fri Apr  3 12:01:43 2026
+// Generated on: Fri Apr  3 12:52:14 2026
 
 
 #include "xHandControlBoard_ParamsParser.h"
@@ -698,7 +698,7 @@ std::string      xHandControlBoard_ParamsParser::getDocumentationOfDeviceParams(
     doc = doc + std::string("'GENERAL::AxisMap': \n");
     doc = doc + std::string("\n");
     doc = doc + std::string("Here are some examples of invocation command with yarpdev, with all params:\n");
-    doc = doc + " yarpdev --device xHandControlBoard --connection_type EtherCAT --RS485::port /dev/ttyUSB0 --RS485::baudrate 3000000 --ETHERCAT::eth_ifname <optional_value> --PID::kp 225 --PID::ki 0 --PID::kd 12000 --TORQUE::tor_max 350 --MODE::mode 3 --LIMITS::jntPosMin \" (0.0 -60.0 -10.0 -10.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0) \" --LIMITS::jntPosMax \" (105.0 90.0 105.0 10.0 110.0 110.0 110.0 110.0 110.0 110.0 110.0 110.0) \" --LIMITS::jntVelMin \" (0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0) \" --LIMITS::jntVelMax \" (100.0 100.0 100.0 100.0 100.0 100.0 100.0 100.0 100.0 100.0 100.0 100.0) \" --GENERAL::AxisName \" (a a a a a a a a a a a a) \" --GENERAL::AxisType \" (a a a a a a a a a a a a) \" --GENERAL::AxisMap \" (0 0 0 0 0 0 0 0 0 0 0 0) \"\n";
+    doc = doc + " yarpdev --device xHandControlBoard --connection_type EtherCAT --RS485::port /dev/ttyUSB0 --RS485::baudrate 3000000 --ETHERCAT::eth_ifname <optional_value> --PID::kp 225 --PID::ki 0 --PID::kd 12000 --TORQUE::tor_max 350 --MODE::mode 3 --LIMITS::jntPosMin \" (0.0 -60.0 -0.0 -5.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0) \" --LIMITS::jntPosMax \" (90.0 90.0 90.0 17.0 110.0 110.0 110.0 110.0 110.0 110.0 110.0 110.0) \" --LIMITS::jntVelMin \" (0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0) \" --LIMITS::jntVelMax \" (100.0 100.0 100.0 100.0 100.0 100.0 100.0 100.0 100.0 100.0 100.0 100.0) \" --GENERAL::AxisName \" (a a a a a a a a a a a a) \" --GENERAL::AxisType \" (a a a a a a a a a a a a) \" --GENERAL::AxisMap \" (0 0 0 0 0 0 0 0 0 0 0 0) \"\n";
     doc = doc + std::string("Using only mandatory params:\n");
     doc = doc + " yarpdev --device xHandControlBoard --connection_type EtherCAT\n";
     doc = doc + std::string("=============================================\n\n");    return doc;
